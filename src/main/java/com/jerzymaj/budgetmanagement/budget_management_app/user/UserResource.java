@@ -1,8 +1,10 @@
 package com.jerzymaj.budgetmanagement.budget_management_app.user;
 
 import com.jerzymaj.budgetmanagement.budget_management_app.costs.MonthlyCosts;
+import com.jerzymaj.budgetmanagement.budget_management_app.costs.MonthlyCostsResults;
 import com.jerzymaj.budgetmanagement.budget_management_app.costs.MonthlyCostsService;
 import com.jerzymaj.budgetmanagement.budget_management_app.exceptions.MonthlyCostsNotFoundException;
+import com.jerzymaj.budgetmanagement.budget_management_app.exceptions.MonthlyCostsResultsNotFoundException;
 import com.jerzymaj.budgetmanagement.budget_management_app.exceptions.UserNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.hateoas.EntityModel;
@@ -10,6 +12,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
@@ -97,10 +101,40 @@ public class UserResource {
         return ResponseEntity.created(location).build();
     }
 
+    @PostMapping("/budget-management/users/{userId}/monthly_costs/sum")
+    public void sumUpAllTheMonthlyCosts(@PathVariable Long userId){
+       double monthlyCostsSum = monthlyCostsService.addUpAllMonthlyCostsForUser(userId);
+
+       Optional<MonthlyCosts> monthlyCosts = monthlyCostsService.getMonthlyCostsByUserId(userId);
+
+        if(monthlyCosts.isEmpty())
+            throw new MonthlyCostsNotFoundException("User with id " + userId + " has no monthly costs.");
+
+       Optional<MonthlyCostsResults> monthlyCostsResults = monthlyCostsService
+               .getMonthlyCostsResultsByMonthlyCostsId(monthlyCosts.get().getId());
+
+       if (monthlyCostsResults.isEmpty())
+           throw new MonthlyCostsResultsNotFoundException("User with id " + userId + " has no monthly costs results.");
 
 
-     
+        monthlyCostsResults.get().setMonthlyCostsSum(monthlyCostsSum);
 
-     
+        monthlyCostsService.createMonthlyCostsResultsForUser(monthlyCostsResults.get());
+
+        monthlyCostsService.createMonthlyCostsForUser(monthlyCosts.get());
+    }
+
+
+    @GetMapping("/budget-management/users/{id}/costs_percentage_of_salary")
+    public BigDecimal retrieveCostsPercentageOfUserSalary(@PathVariable Long id){
+
+        double costsPercentageOfUserSalary = userService.calculateCostsPercentageOfUserSalary(id);
+
+        BigDecimal costsPercentageOfUserSalaryBD = new BigDecimal(costsPercentageOfUserSalary);
+
+        costsPercentageOfUserSalaryBD = costsPercentageOfUserSalaryBD.setScale(2, RoundingMode.HALF_UP);
+
+        return costsPercentageOfUserSalaryBD;
+    }
 
 }

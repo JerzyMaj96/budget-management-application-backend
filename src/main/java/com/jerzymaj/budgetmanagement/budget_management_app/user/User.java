@@ -2,6 +2,7 @@ package com.jerzymaj.budgetmanagement.budget_management_app.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.jerzymaj.budgetmanagement.budget_management_app.costs.MonthlyCosts;
+import com.jerzymaj.budgetmanagement.budget_management_app.costs.MonthlyCostsResults;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Positive;
@@ -23,7 +24,6 @@ public class User {
     @OneToOne(mappedBy = "user",fetch = FetchType.LAZY)
     @JsonIgnore
     private MonthlyCosts monthlyCosts;
-
 
     public User (){}
 
@@ -64,6 +64,7 @@ public class User {
     public void setMonthlyCosts(MonthlyCosts monthlyCosts) {
         this.monthlyCosts = monthlyCosts;
     }
+
 
     @Override
     public String toString() {

@@ -2,6 +2,7 @@ package com.jerzymaj.budgetmanagement.budget_management_app.costs;
 
 import com.jerzymaj.budgetmanagement.budget_management_app.jpa_repositories.MonthlyCostsRepository;
 import com.jerzymaj.budgetmanagement.budget_management_app.exceptions.MonthlyCostsNotFoundException;
+import com.jerzymaj.budgetmanagement.budget_management_app.jpa_repositories.MonthlyCostsResultsRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -10,9 +11,11 @@ import java.util.Optional;
 public class MonthlyCostsService {
 
     private final MonthlyCostsRepository monthlyCostsRepository;
+    private final MonthlyCostsResultsRepository monthlyCostsResultsRepository;
 
-    public MonthlyCostsService(MonthlyCostsRepository monthlyCostsRepository) {
+    public MonthlyCostsService(MonthlyCostsRepository monthlyCostsRepository, MonthlyCostsResultsRepository monthlyCostsResultsRepository) {
         this.monthlyCostsRepository = monthlyCostsRepository;
+        this.monthlyCostsResultsRepository = monthlyCostsResultsRepository;
     }
 
     public Optional<MonthlyCosts> getMonthlyCostsByUserId(Long userId) {
@@ -23,7 +26,15 @@ public class MonthlyCostsService {
         return monthlyCostsRepository.save(monthlyCosts);
     }
 
-    public double addUpAllMonthlyCostsForUser(Long userId){                   //NEED TO FINISH !!!
+    public Optional<MonthlyCostsResults> getMonthlyCostsResultsByMonthlyCostsId(int monthlyCostsId){
+        return monthlyCostsResultsRepository.findByMonthlyCostsId(monthlyCostsId);
+    }
+
+    public MonthlyCostsResults createMonthlyCostsResultsForUser(MonthlyCostsResults monthlyCostsResults){
+        return monthlyCostsResultsRepository.save(monthlyCostsResults);
+    };
+
+    public double addUpAllMonthlyCostsForUser(Long userId){
        Optional<MonthlyCosts> monthlyCosts = monthlyCostsRepository.findByUserId(userId);
 
        if(monthlyCosts.isEmpty())

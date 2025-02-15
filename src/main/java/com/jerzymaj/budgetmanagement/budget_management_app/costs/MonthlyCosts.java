@@ -29,11 +29,13 @@ public class MonthlyCosts {
     @Positive
     private double currentGasBill;
 
-    private double MonthlyCostsSum; // NEED TO FINISH !!!
-
     @OneToOne(fetch = FetchType.LAZY)
     @JsonIgnore
     private User user;
+
+    @OneToOne(mappedBy = "monthly_costs",fetch = FetchType.LAZY)
+    @JsonIgnore
+    private MonthlyCostsResults monthlyCostsResults;
 
     public MonthlyCosts() {
     }
@@ -93,12 +95,12 @@ public class MonthlyCosts {
         this.currentGasBill = currentGasBill;
     }
 
-    public double getMonthlyCostsSum() {
-        return MonthlyCostsSum;
+    public MonthlyCostsResults getMonthlyCostsResults() {
+        return monthlyCostsResults;
     }
 
-    public void setMonthlyCostsSum(double monthlyCostsSum) {
-        MonthlyCostsSum = monthlyCostsSum;
+    public void setMonthlyCostsResults(MonthlyCostsResults monthlyCostsResults) {
+        this.monthlyCostsResults = monthlyCostsResults;
     }
 
     @Override
