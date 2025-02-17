@@ -21,6 +21,7 @@ public class MonthlyCostsResults {
     @JsonIgnore
     private MonthlyCosts monthlyCosts;
 
+    public MonthlyCostsResults(){}
 
     public MonthlyCostsResults(int id, double monthlyCostsSum, BigDecimal costsPercentageOfUserSalary) {
         this.id = id;

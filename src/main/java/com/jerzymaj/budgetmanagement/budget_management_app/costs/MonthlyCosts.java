@@ -33,7 +33,7 @@ public class MonthlyCosts {
     @JsonIgnore
     private User user;
 
-    @OneToOne(mappedBy = "monthly_costs",fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "monthlyCosts",fetch = FetchType.LAZY)
     @JsonIgnore
     private MonthlyCostsResults monthlyCostsResults;
 
