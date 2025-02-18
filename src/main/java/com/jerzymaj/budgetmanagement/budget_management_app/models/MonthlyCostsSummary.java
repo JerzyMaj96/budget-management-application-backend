@@ -1,13 +1,12 @@
-package com.jerzymaj.budgetmanagement.budget_management_app.costs;
+package com.jerzymaj.budgetmanagement.budget_management_app.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.jerzymaj.budgetmanagement.budget_management_app.user.User;
 import jakarta.persistence.*;
 
 import java.math.BigDecimal;
 
 @Entity(name = "monthly_costs_results")
-public class MonthlyCostsResults {
+public class MonthlyCostsSummary {
 
     @Id
     @GeneratedValue
@@ -21,9 +20,9 @@ public class MonthlyCostsResults {
     @JsonIgnore
     private MonthlyCosts monthlyCosts;
 
-    public MonthlyCostsResults(){}
+    public MonthlyCostsSummary(){}
 
-    public MonthlyCostsResults(int id, double monthlyCostsSum, BigDecimal costsPercentageOfUserSalary) {
+    public MonthlyCostsSummary(int id, double monthlyCostsSum, BigDecimal costsPercentageOfUserSalary) {
         this.id = id;
         this.monthlyCostsSum = monthlyCostsSum;
         this.costsPercentageOfUserSalary = costsPercentageOfUserSalary;

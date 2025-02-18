@@ -1,7 +1,6 @@
-package com.jerzymaj.budgetmanagement.budget_management_app.costs;
+package com.jerzymaj.budgetmanagement.budget_management_app.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.jerzymaj.budgetmanagement.budget_management_app.user.User;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -31,11 +30,12 @@ public class MonthlyCosts {
 
     @OneToOne(fetch = FetchType.LAZY)
     @JsonIgnore
-    private User user;
+    private User user;   // MANY TO ONE
+                         // SPRAWDZIć CASCADE TYPE
 
     @OneToOne(mappedBy = "monthlyCosts",fetch = FetchType.LAZY)
     @JsonIgnore
-    private MonthlyCostsResults monthlyCostsResults;
+    private MonthlyCostsSummary monthlyCostsResults;
 
     public MonthlyCosts() {
     }
@@ -95,11 +95,11 @@ public class MonthlyCosts {
         this.currentGasBill = currentGasBill;
     }
 
-    public MonthlyCostsResults getMonthlyCostsResults() {
+    public MonthlyCostsSummary getMonthlyCostsResults() {
         return monthlyCostsResults;
     }
 
-    public void setMonthlyCostsResults(MonthlyCostsResults monthlyCostsResults) {
+    public void setMonthlyCostsResults(MonthlyCostsSummary monthlyCostsResults) {
         this.monthlyCostsResults = monthlyCostsResults;
     }
 

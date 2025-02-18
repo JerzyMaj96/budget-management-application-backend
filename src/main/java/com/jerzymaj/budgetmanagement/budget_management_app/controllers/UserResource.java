@@ -1,11 +1,12 @@
-package com.jerzymaj.budgetmanagement.budget_management_app.user;
+package com.jerzymaj.budgetmanagement.budget_management_app.controllers;
 
-import com.jerzymaj.budgetmanagement.budget_management_app.costs.MonthlyCosts;
-import com.jerzymaj.budgetmanagement.budget_management_app.costs.MonthlyCostsResults;
-import com.jerzymaj.budgetmanagement.budget_management_app.costs.MonthlyCostsService;
+import com.jerzymaj.budgetmanagement.budget_management_app.models.MonthlyCosts;
+import com.jerzymaj.budgetmanagement.budget_management_app.models.MonthlyCostsSummary;
+import com.jerzymaj.budgetmanagement.budget_management_app.services.MonthlyCostsService;
 import com.jerzymaj.budgetmanagement.budget_management_app.exceptions.MonthlyCostsNotFoundException;
-import com.jerzymaj.budgetmanagement.budget_management_app.exceptions.MonthlyCostsResultsNotFoundException;
 import com.jerzymaj.budgetmanagement.budget_management_app.exceptions.UserNotFoundException;
+import com.jerzymaj.budgetmanagement.budget_management_app.models.User;
+import com.jerzymaj.budgetmanagement.budget_management_app.services.UserService;
 import jakarta.validation.Valid;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +23,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
+@RequestMapping("/budget-management")
 public class UserResource {
 
     private final UserService userService;
@@ -32,12 +34,12 @@ public class UserResource {
         this.monthlyCostsService = monthlyCostsService;
     }
 
-    @GetMapping("/budget-management/users")
+    @GetMapping("/users")
     public List<User> retrieveAllUsers() {
         return userService.getAllUsers();
     }
 
-    @GetMapping("/budget-management/users/{id}")
+    @GetMapping("/users/{id}")
     public EntityModel<User> retrieveUserById(@PathVariable Long id) {
 
         User user = userService.getUserById(id).orElseThrow(() -> new UserNotFoundException("id " + id));
@@ -49,12 +51,12 @@ public class UserResource {
         return entityModel;
     }
 
-    @DeleteMapping("/budget-management/users/{id}")
+    @DeleteMapping("/users/{id}")
     public void deleteUserById(@PathVariable Long id) {
         userService.deleteUser(id);
     }
 
-    @PostMapping("/budget-management/users")
+    @PostMapping("/users")
     public ResponseEntity<User> createUser(@Valid @RequestBody User user) {
 
         User savedUser = userService.createUser(user);
@@ -68,7 +70,7 @@ public class UserResource {
         return ResponseEntity.created(location).build();
     }
 
-    @GetMapping("/budget-management/users/{id}/monthly_costs")
+    @GetMapping("/users/{id}/monthly_costs")
     public ResponseEntity<MonthlyCosts> retrieveMonthlyCostsByUserId(@PathVariable Long id) {
         Optional<MonthlyCosts> monthlyCosts = monthlyCostsService.getMonthlyCostsByUserId(id);
 
@@ -79,7 +81,7 @@ public class UserResource {
         return ResponseEntity.ok(monthlyCosts.get());
     }
 
-    @PostMapping("/budget-management/users/{id}/monthly_costs")
+    @PostMapping("/users/{id}/monthly_costs")
     public ResponseEntity<MonthlyCosts> createMonthlyCostsForUser(@PathVariable Long id,
                                                                   @Valid @RequestBody MonthlyCosts monthlyCosts) {
         Optional<User> user = userService.getUserById(id);
@@ -101,18 +103,18 @@ public class UserResource {
         return ResponseEntity.created(location).build();
     }
 
-    @GetMapping("/budget-management/users/{userId}/monthly_costs/monthly_costs_results")
-    public ResponseEntity<MonthlyCostsResults> retrieveMonthlyCostsResultsByUserId(@PathVariable Long userId){
+    @GetMapping("/users/{userId}/monthly_costs/monthly_costs_results")
+    public ResponseEntity<MonthlyCostsSummary> retrieveMonthlyCostsResultsByUserId(@PathVariable Long userId){
 
         MonthlyCosts monthlyCosts = monthlyCostsService.getMonthlyCostsByUserId(userId)
                 .orElseThrow(() -> new MonthlyCostsNotFoundException("User with id " + userId + " has no monthly costs."));
 
-        MonthlyCostsResults monthlyCostsResults = monthlyCosts.getMonthlyCostsResults();
+        MonthlyCostsSummary monthlyCostsResults = monthlyCosts.getMonthlyCostsResults();
 
         return ResponseEntity.ok(monthlyCostsResults);
     }
 
-    @PostMapping("/budget-management/users/{userId}/monthly_costs/sum")
+    @PostMapping("/users/{userId}/monthly_costs/sum")
     public ResponseEntity<Void> sumUpAllTheMonthlyCosts(@PathVariable Long userId){
        double monthlyCostsSum = monthlyCostsService.addUpAllMonthlyCostsForUser(userId);
 
@@ -121,11 +123,11 @@ public class UserResource {
         if(monthlyCosts.isEmpty())
             throw new MonthlyCostsNotFoundException("User with id " + userId + " has no monthly costs.");
 
-       Optional<MonthlyCostsResults> monthlyCostsResults = monthlyCostsService
+       Optional<MonthlyCostsSummary> monthlyCostsResults = monthlyCostsService
                .getMonthlyCostsResultsByMonthlyCostsId(monthlyCosts.get().getId());
 
        if (monthlyCostsResults.isEmpty()){
-           MonthlyCostsResults newMonthlyCostsResults = new MonthlyCostsResults();
+           MonthlyCostsSummary newMonthlyCostsResults = new MonthlyCostsSummary();
            newMonthlyCostsResults.setMonthlyCosts(monthlyCosts.get());
            newMonthlyCostsResults.setMonthlyCostsSum(monthlyCostsSum);
 
@@ -139,7 +141,7 @@ public class UserResource {
     }
 
 
-    @GetMapping("/budget-management/users/{id}/monthly_costs/costs_percentage_of_salary")
+    @GetMapping("/users/{id}/monthly_costs/costs_percentage_of_salary")
     public BigDecimal retrieveCostsPercentageOfUserSalary(@PathVariable Long id){
 
         double costsPercentageOfUserSalary = userService.calculateCostsPercentageOfUserSalary(id);

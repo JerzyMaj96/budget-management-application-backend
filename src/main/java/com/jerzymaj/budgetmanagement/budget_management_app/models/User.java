@@ -1,10 +1,7 @@
-package com.jerzymaj.budgetmanagement.budget_management_app.user;
+package com.jerzymaj.budgetmanagement.budget_management_app.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.jerzymaj.budgetmanagement.budget_management_app.costs.MonthlyCosts;
-import com.jerzymaj.budgetmanagement.budget_management_app.costs.MonthlyCostsResults;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 
@@ -23,7 +20,7 @@ public class User {
 
     @OneToOne(mappedBy = "user",fetch = FetchType.LAZY)
     @JsonIgnore
-    private MonthlyCosts monthlyCosts;
+    private MonthlyCosts monthlyCosts;  // DO USUNIĘCIA
 
     public User (){}
 

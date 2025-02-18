@@ -1,9 +1,9 @@
-package com.jerzymaj.budgetmanagement.budget_management_app.user;
+package com.jerzymaj.budgetmanagement.budget_management_app.services;
 
-import com.jerzymaj.budgetmanagement.budget_management_app.costs.MonthlyCostsService;
 import com.jerzymaj.budgetmanagement.budget_management_app.exceptions.MonthlyCostsNotFoundException;
 import com.jerzymaj.budgetmanagement.budget_management_app.exceptions.UserNotFoundException;
 import com.jerzymaj.budgetmanagement.budget_management_app.jpa_repositories.UserRepository;
+import com.jerzymaj.budgetmanagement.budget_management_app.models.User;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

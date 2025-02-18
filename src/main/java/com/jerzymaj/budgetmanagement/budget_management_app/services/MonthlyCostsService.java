@@ -1,8 +1,10 @@
-package com.jerzymaj.budgetmanagement.budget_management_app.costs;
+package com.jerzymaj.budgetmanagement.budget_management_app.services;
 
 import com.jerzymaj.budgetmanagement.budget_management_app.jpa_repositories.MonthlyCostsRepository;
 import com.jerzymaj.budgetmanagement.budget_management_app.exceptions.MonthlyCostsNotFoundException;
-import com.jerzymaj.budgetmanagement.budget_management_app.jpa_repositories.MonthlyCostsResultsRepository;
+import com.jerzymaj.budgetmanagement.budget_management_app.jpa_repositories.MonthlyCostsSummaryRepository;
+import com.jerzymaj.budgetmanagement.budget_management_app.models.MonthlyCosts;
+import com.jerzymaj.budgetmanagement.budget_management_app.models.MonthlyCostsSummary;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -11,9 +13,9 @@ import java.util.Optional;
 public class MonthlyCostsService {
 
     private final MonthlyCostsRepository monthlyCostsRepository;
-    private final MonthlyCostsResultsRepository monthlyCostsResultsRepository;
+    private final MonthlyCostsSummaryRepository monthlyCostsResultsRepository;
 
-    public MonthlyCostsService(MonthlyCostsRepository monthlyCostsRepository, MonthlyCostsResultsRepository monthlyCostsResultsRepository) {
+    public MonthlyCostsService(MonthlyCostsRepository monthlyCostsRepository, MonthlyCostsSummaryRepository monthlyCostsResultsRepository) {
         this.monthlyCostsRepository = monthlyCostsRepository;
         this.monthlyCostsResultsRepository = monthlyCostsResultsRepository;
     }
@@ -26,11 +28,11 @@ public class MonthlyCostsService {
         return monthlyCostsRepository.save(monthlyCosts);
     }
 
-    public Optional<MonthlyCostsResults> getMonthlyCostsResultsByMonthlyCostsId(int monthlyCostsId){
+    public Optional<MonthlyCostsSummary> getMonthlyCostsResultsByMonthlyCostsId(int monthlyCostsId){
         return monthlyCostsResultsRepository.findByMonthlyCostsId(monthlyCostsId);
     }
 
-    public MonthlyCostsResults createMonthlyCostsResultsForUser(MonthlyCostsResults monthlyCostsResults){
+    public MonthlyCostsSummary createMonthlyCostsResultsForUser(MonthlyCostsSummary monthlyCostsResults){
         return monthlyCostsResultsRepository.save(monthlyCostsResults);
     };
 
