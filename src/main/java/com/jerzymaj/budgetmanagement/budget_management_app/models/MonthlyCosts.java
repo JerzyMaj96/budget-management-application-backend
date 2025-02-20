@@ -1,16 +1,21 @@
 package com.jerzymaj.budgetmanagement.budget_management_app.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import java.time.LocalDateTime;
 
 @Entity(name = "monthly_costs")
 public class MonthlyCosts {
 
     @Id
-    @GeneratedValue
-    private int id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @NotNull
     @Positive
@@ -28,17 +33,24 @@ public class MonthlyCosts {
     @Positive
     private double currentGasBill;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
     @JsonIgnore
-    private User user;   // MANY TO ONE
-                         // SPRAWDZIć CASCADE TYPE
+    private User user;
 
-    @OneToOne(mappedBy = "monthlyCosts",fetch = FetchType.LAZY)
-    @JsonIgnore
-    private MonthlyCostsSummary monthlyCostsResults;
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @CreationTimestamp
+    @Column(updatable = false)
+    private LocalDateTime createDate;
 
-    public MonthlyCosts() {
-    }
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private LocalDateTime deleteDate;
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @UpdateTimestamp
+    private LocalDateTime lastModifiedDate;
+
+    public MonthlyCosts() {}
 
     public MonthlyCosts(double rent, double foodCosts, double currentElectricityBill, double currentGasBill) {
         this.rent = rent;
@@ -47,11 +59,11 @@ public class MonthlyCosts {
         this.currentGasBill = currentGasBill;
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -83,6 +95,10 @@ public class MonthlyCosts {
         return currentGasBill;
     }
 
+    public void setCurrentGasBill(double currentGasBill) {
+        this.currentGasBill = currentGasBill;
+    }
+
     public User getUser() {
         return user;
     }
@@ -91,26 +107,37 @@ public class MonthlyCosts {
         this.user = user;
     }
 
-    public void setCurrentGasBill(double currentGasBill) {
-        this.currentGasBill = currentGasBill;
+    public LocalDateTime getCreateDate() {
+        return createDate;
     }
 
-    public MonthlyCostsSummary getMonthlyCostsResults() {
-        return monthlyCostsResults;
+    public LocalDateTime getDeleteDate() {
+        return deleteDate;
     }
 
-    public void setMonthlyCostsResults(MonthlyCostsSummary monthlyCostsResults) {
-        this.monthlyCostsResults = monthlyCostsResults;
+    public void setDeleteDate(LocalDateTime deleteDate) {
+        this.deleteDate = deleteDate;
+    }
+
+    public LocalDateTime getLastModifiedDate() {
+        return lastModifiedDate;
+    }
+
+    public void setLastModifiedDate(LocalDateTime lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
     }
 
     @Override
     public String toString() {
         return "MonthlyCosts{" +
-                "rent=" + rent +
-                ", avgFoodCosts=" + foodCosts +
+                "id=" + id +
+                ", rent=" + rent +
+                ", foodCosts=" + foodCosts +
                 ", currentElectricityBill=" + currentElectricityBill +
                 ", currentGasBill=" + currentGasBill +
+                ", createDate=" + createDate +
+                ", lastModifiedDate=" + lastModifiedDate +
+                ", deleteDate=" + deleteDate +
                 '}';
     }
-
 }

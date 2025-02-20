@@ -1,15 +1,20 @@
 package com.jerzymaj.budgetmanagement.budget_management_app.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
+
+import java.time.LocalDateTime;
 
 @Entity(name = "user_details")
 public class User {
 
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Size(min = 5, message = "Name should have at least 5 characters")
@@ -18,11 +23,19 @@ public class User {
     @Positive
     private double grossSalary;
 
-    @OneToOne(mappedBy = "user",fetch = FetchType.LAZY)
-    @JsonIgnore
-    private MonthlyCosts monthlyCosts;  // DO USUNIĘCIA
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @CreationTimestamp
+    @Column(updatable = false)
+    private LocalDateTime createDate;
 
-    public User (){}
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private LocalDateTime deleteDate;
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @UpdateTimestamp
+    private LocalDateTime lastModifiedDate;
+
+    public User() {}
 
     public User(Long id, String name, double grossSalary) {
         this.id = id;
@@ -54,14 +67,21 @@ public class User {
         this.grossSalary = grossSalary;
     }
 
-    public MonthlyCosts getMonthlyCosts() {
-        return monthlyCosts;
+    public LocalDateTime getCreateDate() {
+        return createDate;
     }
 
-    public void setMonthlyCosts(MonthlyCosts monthlyCosts) {
-        this.monthlyCosts = monthlyCosts;
+    public LocalDateTime getDeleteDate() {
+        return deleteDate;
     }
 
+    public void setDeleteDate(LocalDateTime deleteDate) {
+        this.deleteDate = deleteDate;
+    }
+
+    public LocalDateTime getLastModifiedDate() {
+        return lastModifiedDate;
+    }
 
     @Override
     public String toString() {
@@ -69,6 +89,9 @@ public class User {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", grossSalary=" + grossSalary +
+                ", createDate=" + createDate +
+                ", deleteDate=" + deleteDate +
+                ", lastModifiedDate=" + lastModifiedDate +
                 '}';
     }
 }

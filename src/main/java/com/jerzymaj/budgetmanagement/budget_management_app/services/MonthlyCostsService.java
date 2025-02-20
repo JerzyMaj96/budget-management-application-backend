@@ -7,20 +7,23 @@ import com.jerzymaj.budgetmanagement.budget_management_app.models.MonthlyCosts;
 import com.jerzymaj.budgetmanagement.budget_management_app.models.MonthlyCostsSummary;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
 public class MonthlyCostsService {
 
     private final MonthlyCostsRepository monthlyCostsRepository;
-    private final MonthlyCostsSummaryRepository monthlyCostsResultsRepository;
+    private final MonthlyCostsSummaryRepository monthlyCostsSummaryRepository;
 
-    public MonthlyCostsService(MonthlyCostsRepository monthlyCostsRepository, MonthlyCostsSummaryRepository monthlyCostsResultsRepository) {
+    public MonthlyCostsService(MonthlyCostsRepository monthlyCostsRepository, MonthlyCostsSummaryRepository monthlyCostsSummaryRepository) {
         this.monthlyCostsRepository = monthlyCostsRepository;
-        this.monthlyCostsResultsRepository = monthlyCostsResultsRepository;
+
+        this.monthlyCostsSummaryRepository = monthlyCostsSummaryRepository;
     }
 
-    public Optional<MonthlyCosts> getMonthlyCostsByUserId(Long userId) {
+    public List<MonthlyCosts> getMonthlyCostsByUserId(Long userId) {
         return monthlyCostsRepository.findByUserId(userId);
     }
 
@@ -28,23 +31,30 @@ public class MonthlyCostsService {
         return monthlyCostsRepository.save(monthlyCosts);
     }
 
-    public Optional<MonthlyCostsSummary> getMonthlyCostsResultsByMonthlyCostsId(int monthlyCostsId){
-        return monthlyCostsResultsRepository.findByMonthlyCostsId(monthlyCostsId);
+    public Optional<MonthlyCosts> getMonthlyCostsById(Long monthlyCostsId) {
+        return monthlyCostsRepository.findById(monthlyCostsId);
     }
 
-    public MonthlyCostsSummary createMonthlyCostsResultsForUser(MonthlyCostsSummary monthlyCostsResults){
-        return monthlyCostsResultsRepository.save(monthlyCostsResults);
+    public Optional<MonthlyCostsSummary> getMonthlyCostsSummaryByMonthlyCostsId(Long monthlyCostsId){
+        return monthlyCostsSummaryRepository.findByMonthlyCostsId(monthlyCostsId);
+    }
+
+    public MonthlyCostsSummary createMonthlyCostsSummaryForUser(MonthlyCostsSummary monthlyCostsSummary){
+        return monthlyCostsSummaryRepository.save(monthlyCostsSummary);
     };
 
-    public double addUpAllMonthlyCostsForUser(Long userId){
-       Optional<MonthlyCosts> monthlyCosts = monthlyCostsRepository.findByUserId(userId);
+    public double addUpAllMonthlyCostsForUser(Long userId, Long monthlyCostsId ) {
+        List<MonthlyCosts> monthlyCosts = monthlyCostsRepository.findByUserId(userId);
 
-       if(monthlyCosts.isEmpty())
-           throw new MonthlyCostsNotFoundException("No monthly costs found for user with id " + userId);
+//        if (monthlyCosts.isEmpty())
+//            throw new MonthlyCostsNotFoundException("No monthly costs found for user with id " + userId);
 
-       return monthlyCosts.get().getRent() + monthlyCosts.get().getFoodCosts() +
-               monthlyCosts.get().getCurrentElectricityBill() + monthlyCosts.get().getCurrentGasBill();
+        for (MonthlyCosts monthlyCost : monthlyCosts)
+            if (Objects.equals(monthlyCost.getId(), monthlyCostsId)) {
+                return monthlyCost.getRent() + monthlyCost.getFoodCosts() +
+                        monthlyCost.getCurrentElectricityBill() + monthlyCost.getCurrentGasBill();
+            }
+        throw new MonthlyCostsNotFoundException("No monthly costs found with id " + monthlyCostsId + " for user " + userId);
     }
-
 
 }
