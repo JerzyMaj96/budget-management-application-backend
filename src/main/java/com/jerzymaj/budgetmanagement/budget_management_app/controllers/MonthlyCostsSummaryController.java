@@ -1,6 +1,7 @@
 package com.jerzymaj.budgetmanagement.budget_management_app.controllers;
 
 import com.jerzymaj.budgetmanagement.budget_management_app.exceptions.MonthlyCostsNotFoundException;
+import com.jerzymaj.budgetmanagement.budget_management_app.exceptions.UserNotFoundException;
 import com.jerzymaj.budgetmanagement.budget_management_app.models.MonthlyCosts;
 import com.jerzymaj.budgetmanagement.budget_management_app.models.MonthlyCostsSummary;
 import com.jerzymaj.budgetmanagement.budget_management_app.services.MonthlyCostsService;
@@ -10,12 +11,13 @@ import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.Month;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/budget-management/users/{userId}/monthly_costs/{monthlyCostsId}")
+@RequestMapping("/budget-management/users/{userId}/monthly_costs")
 public class MonthlyCostsSummaryController {
 
     private final UserService userService;
@@ -27,24 +29,22 @@ public class MonthlyCostsSummaryController {
     }
 
     @PostMapping("/sum")
-    public ResponseEntity<Void> sumUpAllTheMonthlyCosts(@PathVariable Long userId, @PathVariable Long monthlyCostsId){
-        double monthlyCostsSum = monthlyCostsService.addUpAllMonthlyCostsForUser(userId, monthlyCostsId);
+    public ResponseEntity<Void> sumUpAllTheMonthlyCostsForUserByMonth(@PathVariable Long userId, @RequestParam int month) {
 
-        Optional<MonthlyCosts> monthlyCostsOptional = monthlyCostsService.getMonthlyCostsById(monthlyCostsId);
+        MonthlyCosts monthlyCosts = monthlyCostsService.getMonthlyCostsForUserByMonth(userId, month);
 
-        if(monthlyCostsOptional.isEmpty())
-            throw new MonthlyCostsNotFoundException("User with id " + userId + " has no monthly costs.");
-
-        Optional<MonthlyCostsSummary> monthlyCostsSummaryOptional = monthlyCostsService
-                        .getMonthlyCostsSummaryByMonthlyCostsId(monthlyCostsId);
+        double monthlyCostsSum = monthlyCostsService.addUpAllMonthlyCostsForUser(userId, monthlyCosts.getId());
 
         MonthlyCostsSummary monthlyCostsSummary;
 
-        if (monthlyCostsSummaryOptional.isEmpty()) {
+        MonthlyCostsSummary summaryFromDB = monthlyCostsService
+                .getMonthlyCostsSummaryByMonthlyCostsId(monthlyCosts.getId()).orElse(null);
+
+        if (summaryFromDB == null) {
             monthlyCostsSummary = new MonthlyCostsSummary();
-            monthlyCostsSummary.setMonthlyCosts(monthlyCostsOptional.get());
+            monthlyCostsSummary.setMonthlyCosts(monthlyCosts);
         } else {
-            monthlyCostsSummary = monthlyCostsSummaryOptional.get();
+            monthlyCostsSummary = summaryFromDB;
         }
 
         monthlyCostsSummary.setMonthlyCostsSum(monthlyCostsSum);
@@ -52,33 +52,48 @@ public class MonthlyCostsSummaryController {
 
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping("/rent-percentage")
+    public ResponseEntity<BigDecimal> createRentPercentageOfUserSalary(){
+
+    }
+
+    @PostMapping("/food_costs-percentage")
+    public ResponseEntity<BigDecimal> createRentPercentageOfUserSalary(){
+
+    }
+
+    @PostMapping("/current_electricity_bill-percentage")
+    public ResponseEntity<BigDecimal> createRentPercentageOfUserSalary(){
+
+    }
+
+    @PostMapping("/current_gas_bill-percentage")
+    public ResponseEntity<BigDecimal> createRentPercentageOfUserSalary(){
+
+    }
+
     @PostMapping("/costs-percentage")
     public ResponseEntity<BigDecimal> createCostsPercentageOfUserSalary(@PathVariable Long userId,
-                                                                        @PathVariable Long monthlyCostsId) {
-        double costsPercentageOfUserSalary = userService.calculateCostsPercentageOfUserSalaryForMonthlyCosts(userId,
-                monthlyCostsId);
+                                                                        @RequestParam int month) {
 
-        BigDecimal costsPercentageOfUserSalaryBD = BigDecimal.valueOf(costsPercentageOfUserSalary)
-                .setScale(2, RoundingMode.HALF_UP);
+        MonthlyCosts monthlyCosts = monthlyCostsService.getMonthlyCostsForUserByMonth(userId, month);
 
-        Optional<MonthlyCosts> monthlyCostsOptional = monthlyCostsService.getMonthlyCostsById(monthlyCostsId);
+        double costsPercentageOfUserSalary = userService
+                .calculateCostsPercentageOfUserSalaryForMonthlyCosts(userId, monthlyCosts.getId());
 
-        if (monthlyCostsOptional.isEmpty()) {
-            throw new MonthlyCostsNotFoundException("Monthly costs with id " + monthlyCostsId +
-                    " not found for user with id " + userId);
-        }
-        MonthlyCosts monthlyCosts = monthlyCostsOptional.get();
-
-        Optional<MonthlyCostsSummary> monthlyCostsSummaryOptional = monthlyCostsService
-                .getMonthlyCostsSummaryByMonthlyCostsId(monthlyCostsId);
+                BigDecimal costsPercentageOfUserSalaryBD = BigDecimal.valueOf(costsPercentageOfUserSalary)
+                        .setScale(2, RoundingMode.HALF_UP);
 
         MonthlyCostsSummary monthlyCostsSummary;
 
-        if (monthlyCostsSummaryOptional.isEmpty()) {
+        MonthlyCostsSummary summaryFromDB = monthlyCostsService
+                .getMonthlyCostsSummaryByMonthlyCostsId(monthlyCosts.getId()).orElse(null);
+        if (summaryFromDB == null) {
             monthlyCostsSummary = new MonthlyCostsSummary();
             monthlyCostsSummary.setMonthlyCosts(monthlyCosts);
         } else {
-            monthlyCostsSummary = monthlyCostsSummaryOptional.get();
+            monthlyCostsSummary = summaryFromDB;
         }
 
         monthlyCostsSummary.setCostsPercentageOfUserSalary(costsPercentageOfUserSalaryBD);
@@ -88,22 +103,18 @@ public class MonthlyCostsSummaryController {
     }
 
     @GetMapping("/monthly_costs_summary")
-    public ResponseEntity<MonthlyCostsSummary> retrieveMonthlyCostsSummaryByUserIdAndMonthlyCostsId(@PathVariable Long userId,
-                                                                                   @PathVariable Long monthlyCostsId){
-        List<MonthlyCosts> monthlyCosts = monthlyCostsService.getMonthlyCostsByUserId(userId);
+    public ResponseEntity<MonthlyCostsSummary> retrieveMonthlyCostsSummaryByUserIdAndMonth(@PathVariable Long userId,
+                                                                                           @RequestParam int month){
 
-        for (MonthlyCosts monthlyCost : monthlyCosts)
-            if (Objects.equals(monthlyCost.getId(), monthlyCostsId)){
+        MonthlyCosts monthlyCosts = monthlyCostsService.getMonthlyCostsForUserByMonth(userId, month);
 
-                Optional<MonthlyCostsSummary> monthlyCostsSummary = monthlyCostsService
-                        .getMonthlyCostsSummaryByMonthlyCostsId(monthlyCostsId);
+        Optional<MonthlyCostsSummary> monthlyCostsSummary = monthlyCostsService
+                        .getMonthlyCostsSummaryByMonthlyCostsId(monthlyCosts.getId());
 
-                if(monthlyCostsSummary.isEmpty())
-                    throw new MonthlyCostsNotFoundException("No monthly costs summary found for user with id " + userId);
+        if(monthlyCostsSummary.isEmpty())
+            throw new MonthlyCostsNotFoundException("No monthly costs summary found for user with id " + userId);
 
-                return ResponseEntity.ok(monthlyCostsSummary.get());
-         }
-        throw new MonthlyCostsNotFoundException("No monthly costs summary found for user with id " + userId);
+        return ResponseEntity.ok(monthlyCostsSummary.get());
      }
 
 }

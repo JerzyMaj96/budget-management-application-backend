@@ -17,7 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/budget-management/users/{userId}")
+@RequestMapping("/budget-management/users/{userId}/monthly_costs")
 public class MonthlyCostsController {
 
     private final UserService userService;
@@ -28,13 +28,13 @@ public class MonthlyCostsController {
         this.monthlyCostsService = monthlyCostsService;
     }
 
-    @PostMapping("/monthly_costs")
+    @PostMapping
     public ResponseEntity<MonthlyCosts> createMonthlyCostsForUser(@PathVariable Long userId,
                                                                   @Valid @RequestBody MonthlyCosts monthlyCosts) {
         Optional<User> user = userService.getUserById(userId);
 
         if (user.isEmpty())
-            throw new UserNotFoundException("id " + userId);
+            throw new UserNotFoundException("User not found: " + userId);
 
         List<MonthlyCosts> existingMonthlyCostsCheck = monthlyCostsService.getMonthlyCostsByUserId(userId);
 
@@ -63,7 +63,7 @@ public class MonthlyCostsController {
         return ResponseEntity.created(location).build();
     }
 
-    @GetMapping("/monthly_costs/byUserId")
+    @GetMapping("/byUserId")
     public ResponseEntity<List<MonthlyCosts>> retrieveMonthlyCostsByUserId(@PathVariable Long userId) {
         List<MonthlyCosts> monthlyCosts = monthlyCostsService.getMonthlyCostsByUserId(userId);
 
@@ -74,7 +74,7 @@ public class MonthlyCostsController {
         return ResponseEntity.ok(monthlyCosts);
     }
 
-    @GetMapping("/monthly_costs/byMonth")
+    @GetMapping("/byMonth")
     public ResponseEntity<MonthlyCosts> retrieveMonthlyCostsByUserIdAndMonthOfMonthlyCosts(
             @PathVariable Long userId, @RequestParam int creationMonth) {
 

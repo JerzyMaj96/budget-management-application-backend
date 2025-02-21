@@ -3,6 +3,7 @@ package com.jerzymaj.budgetmanagement.budget_management_app.models;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import org.hibernate.annotations.CreationTimestamp;
@@ -21,7 +22,7 @@ public class User {
     private String name;
 
     @Positive
-    private double grossSalary;
+    private double nettSalary;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @CreationTimestamp
@@ -37,10 +38,10 @@ public class User {
 
     public User() {}
 
-    public User(Long id, String name, double grossSalary) {
+    public User(Long id, String name, double nettSalary) {
         this.id = id;
         this.name = name;
-        this.grossSalary = grossSalary;
+        this.nettSalary = nettSalary;
     }
 
     public Long getId() {
@@ -59,12 +60,12 @@ public class User {
         this.name = name;
     }
 
-    public double getGrossSalary() {
-        return grossSalary;
+    public double getNettSalary() {
+        return nettSalary;
     }
 
-    public void setGrossSalary(double grossSalary) {
-        this.grossSalary = grossSalary;
+    public void setNettSalary(double nettSalary) {
+        this.nettSalary = nettSalary;
     }
 
     public LocalDateTime getCreateDate() {
@@ -88,7 +89,7 @@ public class User {
         return "User{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", grossSalary=" + grossSalary +
+                ", nettSalary=" + nettSalary +
                 ", createDate=" + createDate +
                 ", deleteDate=" + deleteDate +
                 ", lastModifiedDate=" + lastModifiedDate +

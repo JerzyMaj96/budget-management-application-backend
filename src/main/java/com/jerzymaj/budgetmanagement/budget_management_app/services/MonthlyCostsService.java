@@ -7,6 +7,7 @@ import com.jerzymaj.budgetmanagement.budget_management_app.models.MonthlyCosts;
 import com.jerzymaj.budgetmanagement.budget_management_app.models.MonthlyCostsSummary;
 import org.springframework.stereotype.Service;
 
+import java.time.Month;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -43,11 +44,21 @@ public class MonthlyCostsService {
         return monthlyCostsSummaryRepository.save(monthlyCostsSummary);
     };
 
+    public MonthlyCosts getMonthlyCostsForUserByMonth(Long userId, int month) {
+        List<MonthlyCosts> monthlyCostsList = getMonthlyCostsByUserId(userId);
+        if (monthlyCostsList.isEmpty()) {
+            throw new MonthlyCostsNotFoundException("User with id " + userId + " has no monthly costs.");
+        }
+        for (MonthlyCosts monthlyCost : monthlyCostsList) {
+            if (monthlyCost.getLastModifiedDate().getMonth() == Month.of(month)) {
+                return monthlyCost;
+            }
+        }
+        throw new MonthlyCostsNotFoundException("No monthly costs found for month " + Month.of(month).name().toLowerCase());
+    }
+
     public double addUpAllMonthlyCostsForUser(Long userId, Long monthlyCostsId ) {
         List<MonthlyCosts> monthlyCosts = monthlyCostsRepository.findByUserId(userId);
-
-//        if (monthlyCosts.isEmpty())
-//            throw new MonthlyCostsNotFoundException("No monthly costs found for user with id " + userId);
 
         for (MonthlyCosts monthlyCost : monthlyCosts)
             if (Objects.equals(monthlyCost.getId(), monthlyCostsId)) {

@@ -1,6 +1,5 @@
 package com.jerzymaj.budgetmanagement.budget_management_app.controllers;
 
-import com.jerzymaj.budgetmanagement.budget_management_app.services.MonthlyCostsService;
 import com.jerzymaj.budgetmanagement.budget_management_app.exceptions.UserNotFoundException;
 import com.jerzymaj.budgetmanagement.budget_management_app.models.User;
 import com.jerzymaj.budgetmanagement.budget_management_app.services.UserService;
@@ -17,7 +16,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
-@RequestMapping("/budget-management")
+@RequestMapping("/budget-management/users")
 public class UserController {
 
     private final UserService userService;
@@ -26,15 +25,15 @@ public class UserController {
         this.userService = userService;
     }
 
-    @GetMapping("/users")
+    @GetMapping
     public List<User> retrieveAllUsers() {
         return userService.getAllUsers();
     }
 
-    @GetMapping("/users/{id}")
-    public EntityModel<User> retrieveUserById(@PathVariable Long id) {
+    @GetMapping("/{userId}")
+    public EntityModel<User> retrieveUserById(@PathVariable Long userId) {
 
-        User user = userService.getUserById(id).orElseThrow(() -> new UserNotFoundException("User not found: " + id));
+        User user = userService.getUserById(userId).orElseThrow(() -> new UserNotFoundException("User not found: " + userId));
 
         EntityModel<User> entityModel = EntityModel.of(user);
 
@@ -43,12 +42,12 @@ public class UserController {
         return entityModel;
     }
 
-    @DeleteMapping("/users/{id}")
-    public void deleteUserById(@PathVariable Long id) {
-        userService.deleteUser(id);
+    @DeleteMapping("/{userId}")
+    public void deleteUserById(@PathVariable Long userId) {
+        userService.deleteUser(userId);
     }
 
-    @PostMapping("/users")
+    @PostMapping
     public ResponseEntity<User> createUser(@Valid @RequestBody User user) {
 
         User savedUser = userService.createUser(user);

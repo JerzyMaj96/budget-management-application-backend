@@ -38,41 +38,67 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-//    public double calculateCostsPercentageOfUserSalaryForMonthlyCosts(Long userId, Long monthlyCostsId ) {
-//
-//        Optional<User> user = userRepository.findById(userId);
-//
-//        if(user.isEmpty())
-//            throw new UserNotFoundException("No user with id" + userId);
-//
-//        List<MonthlyCosts> monthlyCosts = monthlyCostsService.getMonthlyCostsByUserId(userId);
-//
-//        for (MonthlyCosts monthlyCost : monthlyCosts)
-//            if (Objects.equals(monthlyCost.getId(), monthlyCostsId)) {
-//
-//                double totalCosts;
-//
-//                try {
-//                    totalCosts = monthlyCostsService.addUpAllMonthlyCostsForUser(userId, monthlyCostsId);
-//                } catch (MonthlyCostsNotFoundException e) {
-//                    throw new MonthlyCostsNotFoundException("No monthly costs found for user with id " + userId);
-//                }
-//                if (user.get().getGrossSalary() == 0) {
-//                    throw new IllegalArgumentException("Gross salary cannot be zero for user with id " + userId);
-//                }
-//
-//
-//                return (totalCosts / user.get().getGrossSalary()) * 100;
-//            }
-//        throw new MonthlyCostsNotFoundException("Monthly costs with id " +
-//                monthlyCostsId + " not found for user with id " + userId);
-//    }
+    public double calculateRentCostPercentageOfUserSalaryForMonthlyCosts(Long userId, Long monthlyCostsId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found: " + userId));
+
+        List<MonthlyCosts> monthlyCostsList = monthlyCostsService.getMonthlyCostsByUserId(userId);
+
+        for(MonthlyCosts monthlyCost : monthlyCostsList)
+            if (Objects.equals(monthlyCost.getId(), monthlyCostsId)) {
+                return (monthlyCost.getRent() / user.getNettSalary() * 100);
+            }
+        throw new MonthlyCostsNotFoundException("No monthly costs found with id " + monthlyCostsId + " for user " + userId);
+    }
+
+    public double calculateFoodCostsCostPercentageOfUserSalaryForMonthlyCosts(Long userId, Long monthlyCostsId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found: " + userId));
+
+        List<MonthlyCosts> monthlyCostsList = monthlyCostsService.getMonthlyCostsByUserId(userId);
+
+        for(MonthlyCosts monthlyCost : monthlyCostsList)
+            if (Objects.equals(monthlyCost.getId(), monthlyCostsId)) {
+                return (monthlyCost.getFoodCosts() / user.getNettSalary() * 100);
+            }
+        throw new MonthlyCostsNotFoundException("No monthly costs found with id " + monthlyCostsId + " for user " + userId);
+    }
+
+    public double calculateCurrentElectricityBillCostPercentageOfUserSalaryForMonthlyCosts(Long userId,
+                                                                                           Long monthlyCostsId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found: " + userId));
+
+        List<MonthlyCosts> monthlyCostsList = monthlyCostsService.getMonthlyCostsByUserId(userId);
+
+        for(MonthlyCosts monthlyCost : monthlyCostsList)
+            if (Objects.equals(monthlyCost.getId(), monthlyCostsId)) {
+                return (monthlyCost.getCurrentElectricityBill() / user.getNettSalary() * 100);
+            }
+        throw new MonthlyCostsNotFoundException("No monthly costs found with id " + monthlyCostsId + " for user " + userId);
+    }
+
+    public double calculateCurrentGasBillCostPercentageOfUserSalaryForMonthlyCosts(Long userId,
+                                                                                           Long monthlyCostsId) {
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found: " + userId));
+
+        List<MonthlyCosts> monthlyCostsList = monthlyCostsService.getMonthlyCostsByUserId(userId);
+
+        for(MonthlyCosts monthlyCost : monthlyCostsList)
+            if (Objects.equals(monthlyCost.getId(), monthlyCostsId)) {
+                return (monthlyCost.getCurrentElectricityBill() / user.getNettSalary() * 100);
+            }
+        throw new MonthlyCostsNotFoundException("No monthly costs found with id " + monthlyCostsId + " for user " + userId);
+    }
+
+
 
     public double calculateCostsPercentageOfUserSalaryForMonthlyCosts(Long userId, Long monthlyCostsId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found: " + userId));
 
         double totalCosts = monthlyCostsService.addUpAllMonthlyCostsForUser(userId, monthlyCostsId);
-        return (totalCosts / user.getGrossSalary()) * 100;
+        return (totalCosts / user.getNettSalary() * 100);
     }
 }
