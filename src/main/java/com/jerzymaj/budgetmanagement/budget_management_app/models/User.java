@@ -22,7 +22,7 @@ public class User {
     private String name;
 
     @Positive
-    private double nettSalary;
+    private double netSalary;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @CreationTimestamp
@@ -38,10 +38,10 @@ public class User {
 
     public User() {}
 
-    public User(Long id, String name, double nettSalary) {
+    public User(Long id, String name, double netSalary) {
         this.id = id;
         this.name = name;
-        this.nettSalary = nettSalary;
+        this.netSalary = netSalary;
     }
 
     public Long getId() {
@@ -60,12 +60,12 @@ public class User {
         this.name = name;
     }
 
-    public double getNettSalary() {
-        return nettSalary;
+    public double getNetSalary() {
+        return netSalary;
     }
 
-    public void setNettSalary(double nettSalary) {
-        this.nettSalary = nettSalary;
+    public void setNetSalary(double netSalary) {
+        this.netSalary = netSalary;
     }
 
     public LocalDateTime getCreateDate() {
@@ -89,7 +89,7 @@ public class User {
         return "User{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", nettSalary=" + nettSalary +
+                ", netSalary=" + netSalary +
                 ", createDate=" + createDate +
                 ", deleteDate=" + deleteDate +
                 ", lastModifiedDate=" + lastModifiedDate +

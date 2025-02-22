@@ -44,6 +44,19 @@ public class MonthlyCostsService {
         return monthlyCostsSummaryRepository.save(monthlyCostsSummary);
     };
 
+    public MonthlyCostsSummary getOrCreateMonthlyCostsSummary(MonthlyCosts monthlyCosts){
+
+        MonthlyCostsSummary summaryFromDB = getMonthlyCostsSummaryByMonthlyCostsId(monthlyCosts.getId())
+                .orElse(null);
+
+        if (summaryFromDB == null) {
+            MonthlyCostsSummary newSummary = new MonthlyCostsSummary();
+            newSummary.setMonthlyCosts(monthlyCosts);
+            return newSummary;
+        }
+        return summaryFromDB;
+    }
+
     public MonthlyCosts getMonthlyCostsForUserByMonth(Long userId, int month) {
         List<MonthlyCosts> monthlyCostsList = getMonthlyCostsByUserId(userId);
         if (monthlyCostsList.isEmpty()) {

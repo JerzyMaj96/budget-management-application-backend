@@ -18,7 +18,17 @@ public class MonthlyCostsSummary {
 
     private double monthlyCostsSum;
 
+    private BigDecimal rentPercentageOfUserSalary;
+
+    private BigDecimal foodCostsPercentageOfUserSalary;
+
+    private BigDecimal currentElectricityBillPercentageOfUserSalary;
+
+    private BigDecimal currentGasBillPercentageOfUserSalary;
+
     private BigDecimal costsPercentageOfUserSalary;
+
+    private double netSalaryAfterCosts;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "monthly_costs_id", unique = true)
@@ -61,6 +71,38 @@ public class MonthlyCostsSummary {
         this.monthlyCostsSum = monthlyCostsSum;
     }
 
+    public BigDecimal getRentPercentageOfUserSalary() {
+        return rentPercentageOfUserSalary;
+    }
+
+    public void setRentPercentageOfUserSalary(BigDecimal rentPercentageOfUserSalary) {
+        this.rentPercentageOfUserSalary = rentPercentageOfUserSalary;
+    }
+
+    public BigDecimal getFoodCostsPercentageOfUserSalary() {
+        return foodCostsPercentageOfUserSalary;
+    }
+
+    public void setFoodCostsPercentageOfUserSalary(BigDecimal foodCostsPercentageOfUserSalary) {
+        this.foodCostsPercentageOfUserSalary = foodCostsPercentageOfUserSalary;
+    }
+
+    public BigDecimal getCurrentElectricityBillPercentageOfUserSalary() {
+        return currentElectricityBillPercentageOfUserSalary;
+    }
+
+    public void setCurrentElectricityBillPercentageOfUserSalary(BigDecimal currentElectricityBillPercentageOfUserSalary) {
+        this.currentElectricityBillPercentageOfUserSalary = currentElectricityBillPercentageOfUserSalary;
+    }
+
+    public BigDecimal getCurrentGasBillPercentageOfUserSalary() {
+        return currentGasBillPercentageOfUserSalary;
+    }
+
+    public void setCurrentGasBillPercentageOfUserSalary(BigDecimal currentGasBillPercentageOfUserSalary) {
+        this.currentGasBillPercentageOfUserSalary = currentGasBillPercentageOfUserSalary;
+    }
+
     public BigDecimal getCostsPercentageOfUserSalary() {
         return costsPercentageOfUserSalary;
     }
@@ -95,13 +137,18 @@ public class MonthlyCostsSummary {
 
     @Override
     public String toString() {
-        return "MonthlyCostsResults{" +
-                "costsPercentageOfUserSalary=" + costsPercentageOfUserSalary +
+        return "MonthlyCostsSummary{" +
+                "id=" + id +
                 ", monthlyCostsSum=" + monthlyCostsSum +
-                ", id=" + id +
+                ", rentPercentageOfUserSalary=" + rentPercentageOfUserSalary +
+                ", foodCostsPercentageOfUserSalary=" + foodCostsPercentageOfUserSalary +
+                ", currentElectricityBillPercentageOfUserSalary=" + currentElectricityBillPercentageOfUserSalary +
+                ", currentGasBillPercentageOfUserSalary=" + currentGasBillPercentageOfUserSalary +
+                ", costsPercentageOfUserSalary=" + costsPercentageOfUserSalary +
+                ", monthlyCosts=" + monthlyCosts +
                 ", createDate=" + createDate +
-                ", lastModifiedDate=" + lastModifiedDate +
                 ", deleteDate=" + deleteDate +
+                ", lastModifiedDate=" + lastModifiedDate +
                 '}';
     }
 }

@@ -7,6 +7,9 @@ import com.jerzymaj.budgetmanagement.budget_management_app.models.MonthlyCosts;
 import com.jerzymaj.budgetmanagement.budget_management_app.models.User;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.Month;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -38,67 +41,64 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-    public double calculateRentCostPercentageOfUserSalaryForMonthlyCosts(Long userId, Long monthlyCostsId) {
+    public BigDecimal calculateRentCostPercentageOfUserSalaryForMonthlyCosts(Long userId, int month) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found: " + userId));
 
-        List<MonthlyCosts> monthlyCostsList = monthlyCostsService.getMonthlyCostsByUserId(userId);
+        MonthlyCosts monthlyCosts = monthlyCostsService.getMonthlyCostsForUserByMonth(userId,month);
 
-        for(MonthlyCosts monthlyCost : monthlyCostsList)
-            if (Objects.equals(monthlyCost.getId(), monthlyCostsId)) {
-                return (monthlyCost.getRent() / user.getNettSalary() * 100);
-            }
-        throw new MonthlyCostsNotFoundException("No monthly costs found with id " + monthlyCostsId + " for user " + userId);
+        double rentPercentageOdUserSalary = monthlyCosts.getRent() / user.getNetSalary() * 100;
+
+        return  BigDecimal.valueOf(rentPercentageOdUserSalary).setScale(2, RoundingMode.HALF_UP);
     }
 
-    public double calculateFoodCostsCostPercentageOfUserSalaryForMonthlyCosts(Long userId, Long monthlyCostsId) {
+    public BigDecimal calculateFoodCostsCostPercentageOfUserSalaryForMonthlyCosts(Long userId, int month) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found: " + userId));
 
-        List<MonthlyCosts> monthlyCostsList = monthlyCostsService.getMonthlyCostsByUserId(userId);
+        MonthlyCosts monthlyCosts = monthlyCostsService.getMonthlyCostsForUserByMonth(userId,month);
 
-        for(MonthlyCosts monthlyCost : monthlyCostsList)
-            if (Objects.equals(monthlyCost.getId(), monthlyCostsId)) {
-                return (monthlyCost.getFoodCosts() / user.getNettSalary() * 100);
-            }
-        throw new MonthlyCostsNotFoundException("No monthly costs found with id " + monthlyCostsId + " for user " + userId);
+        double foodCostsPercentageOdUserSalary = monthlyCosts.getFoodCosts() / user.getNetSalary() * 100;
+
+        return BigDecimal.valueOf(foodCostsPercentageOdUserSalary).setScale(2, RoundingMode.HALF_UP);
     }
 
-    public double calculateCurrentElectricityBillCostPercentageOfUserSalaryForMonthlyCosts(Long userId,
-                                                                                           Long monthlyCostsId) {
+    public BigDecimal calculateCurrentElectricityBillCostPercentageOfUserSalaryForMonthlyCosts(Long userId,
+                                                                                           int month) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found: " + userId));
 
-        List<MonthlyCosts> monthlyCostsList = monthlyCostsService.getMonthlyCostsByUserId(userId);
+        MonthlyCosts monthlyCosts = monthlyCostsService.getMonthlyCostsForUserByMonth(userId,month);
 
-        for(MonthlyCosts monthlyCost : monthlyCostsList)
-            if (Objects.equals(monthlyCost.getId(), monthlyCostsId)) {
-                return (monthlyCost.getCurrentElectricityBill() / user.getNettSalary() * 100);
-            }
-        throw new MonthlyCostsNotFoundException("No monthly costs found with id " + monthlyCostsId + " for user " + userId);
+        double currentElectricityBillPercentageOdUserSalary = monthlyCosts.getCurrentElectricityBill() / user.getNetSalary() * 100;
+
+        return BigDecimal.valueOf(currentElectricityBillPercentageOdUserSalary).setScale(2, RoundingMode.HALF_UP);
     }
 
-    public double calculateCurrentGasBillCostPercentageOfUserSalaryForMonthlyCosts(Long userId,
-                                                                                           Long monthlyCostsId) {
+    public BigDecimal calculateCurrentGasBillCostPercentageOfUserSalaryForMonthlyCosts(Long userId,
+                                                                                           int month) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found: " + userId));
 
-        List<MonthlyCosts> monthlyCostsList = monthlyCostsService.getMonthlyCostsByUserId(userId);
+        MonthlyCosts monthlyCosts = monthlyCostsService.getMonthlyCostsForUserByMonth(userId,month);
 
-        for(MonthlyCosts monthlyCost : monthlyCostsList)
-            if (Objects.equals(monthlyCost.getId(), monthlyCostsId)) {
-                return (monthlyCost.getCurrentElectricityBill() / user.getNettSalary() * 100);
-            }
-        throw new MonthlyCostsNotFoundException("No monthly costs found with id " + monthlyCostsId + " for user " + userId);
+        double currentGasBillPercentageOdUserSalary = monthlyCosts.getCurrentGasBill() / user.getNetSalary() * 100;
+
+        return BigDecimal.valueOf(currentGasBillPercentageOdUserSalary).setScale(2, RoundingMode.HALF_UP);
     }
 
 
 
-    public double calculateCostsPercentageOfUserSalaryForMonthlyCosts(Long userId, Long monthlyCostsId) {
+    public BigDecimal calculateAllCostsPercentageOfUserSalaryForMonthlyCosts(Long userId, int month) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found: " + userId));
 
-        double totalCosts = monthlyCostsService.addUpAllMonthlyCostsForUser(userId, monthlyCostsId);
-        return (totalCosts / user.getNettSalary() * 100);
+        MonthlyCosts monthlyCosts = monthlyCostsService.getMonthlyCostsForUserByMonth(userId, month);
+
+        double totalCosts = monthlyCostsService.addUpAllMonthlyCostsForUser(userId, monthlyCosts.getId());
+
+        double costsPercentageOfUserSalary = totalCosts / user.getNetSalary() * 100;
+
+        return BigDecimal.valueOf(costsPercentageOfUserSalary).setScale(2, RoundingMode.HALF_UP);
     }
 }
