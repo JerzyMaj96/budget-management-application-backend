@@ -16,7 +16,7 @@ public class MonthlyCostsSummary {
     @GeneratedValue
     private int id;
 
-    private double monthlyCostsSum;
+    private Double monthlyCostsSum;
 
     private BigDecimal rentPercentageOfUserSalary;
 
@@ -26,9 +26,15 @@ public class MonthlyCostsSummary {
 
     private BigDecimal currentGasBillPercentageOfUserSalary;
 
+    private BigDecimal totalCarServicePercentageOfUserSalary;
+
+    private BigDecimal carInsuranceCostsPercentageOfUserSalary;
+
+    private BigDecimal carOperatingCostsPercentageOfUserSalary;
+
     private BigDecimal costsPercentageOfUserSalary;
 
-    private double netSalaryAfterCosts;
+    private BigDecimal netSalaryAfterCosts;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "monthly_costs_id", unique = true)
@@ -49,10 +55,23 @@ public class MonthlyCostsSummary {
 
     public MonthlyCostsSummary(){}
 
-    public MonthlyCostsSummary(int id, double monthlyCostsSum, BigDecimal costsPercentageOfUserSalary) {
+    public MonthlyCostsSummary(int id, Double monthlyCostsSum, BigDecimal rentPercentageOfUserSalary,
+                               BigDecimal foodCostsPercentageOfUserSalary,
+                               BigDecimal currentElectricityBillPercentageOfUserSalary, BigDecimal currentGasBillPercentageOfUserSalary,
+                               BigDecimal totalCarServicePercentageOfUserSalary, BigDecimal carInsuranceCostsPercentageOfUserSalary,
+                               BigDecimal carOperatingCostsPercentageOfUserSalary, BigDecimal costsPercentageOfUserSalary,
+                               BigDecimal netSalaryAfterCosts) {
         this.id = id;
         this.monthlyCostsSum = monthlyCostsSum;
+        this.rentPercentageOfUserSalary = rentPercentageOfUserSalary;
+        this.foodCostsPercentageOfUserSalary = foodCostsPercentageOfUserSalary;
+        this.currentElectricityBillPercentageOfUserSalary = currentElectricityBillPercentageOfUserSalary;
+        this.currentGasBillPercentageOfUserSalary = currentGasBillPercentageOfUserSalary;
+        this.totalCarServicePercentageOfUserSalary = totalCarServicePercentageOfUserSalary;
+        this.carInsuranceCostsPercentageOfUserSalary = carInsuranceCostsPercentageOfUserSalary;
+        this.carOperatingCostsPercentageOfUserSalary = carOperatingCostsPercentageOfUserSalary;
         this.costsPercentageOfUserSalary = costsPercentageOfUserSalary;
+        this.netSalaryAfterCosts = netSalaryAfterCosts;
     }
 
     public int getId() {
@@ -63,11 +82,11 @@ public class MonthlyCostsSummary {
         this.id = id;
     }
 
-    public double getMonthlyCostsSum() {
+    public Double getMonthlyCostsSum() {
         return monthlyCostsSum;
     }
 
-    public void setMonthlyCostsSum(double monthlyCostsSum) {
+    public void setMonthlyCostsSum(Double monthlyCostsSum) {
         this.monthlyCostsSum = monthlyCostsSum;
     }
 
@@ -103,12 +122,44 @@ public class MonthlyCostsSummary {
         this.currentGasBillPercentageOfUserSalary = currentGasBillPercentageOfUserSalary;
     }
 
+    public BigDecimal getTotalCarServicePercentageOfUserSalary() {
+        return totalCarServicePercentageOfUserSalary;
+    }
+
+    public void setTotalCarServicePercentageOfUserSalary(BigDecimal totalCarServicePercentageOfUserSalary) {
+        this.totalCarServicePercentageOfUserSalary = totalCarServicePercentageOfUserSalary;
+    }
+
+    public BigDecimal getCarInsuranceCostsPercentageOfUserSalary() {
+        return carInsuranceCostsPercentageOfUserSalary;
+    }
+
+    public void setCarInsuranceCostsPercentageOfUserSalary(BigDecimal carInsuranceCostsPercentageOfUserSalary) {
+        this.carInsuranceCostsPercentageOfUserSalary = carInsuranceCostsPercentageOfUserSalary;
+    }
+
+    public BigDecimal getCarOperatingCostsPercentageOfUserSalary() {
+        return carOperatingCostsPercentageOfUserSalary;
+    }
+
+    public void setCarOperatingCostsPercentageOfUserSalary(BigDecimal carOperatingCostsPercentageOfUserSalary) {
+        this.carOperatingCostsPercentageOfUserSalary = carOperatingCostsPercentageOfUserSalary;
+    }
+
     public BigDecimal getCostsPercentageOfUserSalary() {
         return costsPercentageOfUserSalary;
     }
 
     public void setCostsPercentageOfUserSalary(BigDecimal costsPercentageOfUserSalary) {
         this.costsPercentageOfUserSalary = costsPercentageOfUserSalary;
+    }
+
+    public BigDecimal getNetSalaryAfterCosts() {
+        return netSalaryAfterCosts;
+    }
+
+    public void setNetSalaryAfterCosts(BigDecimal netSalaryAfterCosts) {
+        this.netSalaryAfterCosts = netSalaryAfterCosts;
     }
 
     public MonthlyCosts getMonthlyCosts() {
@@ -145,6 +196,7 @@ public class MonthlyCostsSummary {
                 ", currentElectricityBillPercentageOfUserSalary=" + currentElectricityBillPercentageOfUserSalary +
                 ", currentGasBillPercentageOfUserSalary=" + currentGasBillPercentageOfUserSalary +
                 ", costsPercentageOfUserSalary=" + costsPercentageOfUserSalary +
+                ", netSalaryAfterCosts=" + netSalaryAfterCosts +
                 ", monthlyCosts=" + monthlyCosts +
                 ", createDate=" + createDate +
                 ", deleteDate=" + deleteDate +

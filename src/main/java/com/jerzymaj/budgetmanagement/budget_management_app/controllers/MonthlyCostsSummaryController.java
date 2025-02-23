@@ -34,7 +34,7 @@ public class MonthlyCostsSummaryController {
 
         MonthlyCosts monthlyCosts = monthlyCostsService.getMonthlyCostsForUserByMonth(userId, month);
 
-        double monthlyCostsSum = monthlyCostsService.addUpAllMonthlyCostsForUser(userId, monthlyCosts.getId());
+        double monthlyCostsSum = monthlyCostsService.addUpAllMonthlyCostsForUser(monthlyCosts.getId());
 
         MonthlyCostsSummary monthlyCostsSummary = monthlyCostsService.getOrCreateMonthlyCostsSummary(monthlyCosts);
 
@@ -47,65 +47,113 @@ public class MonthlyCostsSummaryController {
     @PostMapping("/rent-percentage")
     public ResponseEntity<BigDecimal> createRentPercentageOfUserSalary(@PathVariable Long userId,
                                                                        @RequestParam int month){
-       BigDecimal rentPercentageOdUserSalaryBD = userService.calculateRentCostPercentageOfUserSalaryForMonthlyCosts(userId,month);
+       BigDecimal rentPercentageOfUserSalaryBD = userService.calculateRentCostPercentageOfUserSalaryForMonthlyCosts(userId,month);
 
        MonthlyCosts monthlyCosts = monthlyCostsService.getMonthlyCostsForUserByMonth(userId,month);
 
        MonthlyCostsSummary monthlyCostsSummary = monthlyCostsService.getOrCreateMonthlyCostsSummary(monthlyCosts);
 
-        monthlyCostsSummary.setRentPercentageOfUserSalary(rentPercentageOdUserSalaryBD);
+        monthlyCostsSummary.setRentPercentageOfUserSalary(rentPercentageOfUserSalaryBD);
         monthlyCostsService.createMonthlyCostsSummaryForUser(monthlyCostsSummary);
 
-        return ResponseEntity.ok(rentPercentageOdUserSalaryBD);
+        return ResponseEntity.ok(rentPercentageOfUserSalaryBD);
     }
 
     @PostMapping("/food_costs-percentage")
     public ResponseEntity<BigDecimal> createFoodCostsPercentageOfUserSalary(@PathVariable Long userId,
                                                                        @RequestParam int month){
-        BigDecimal foodCostsPercentageOdUserSalaryBD = userService
+        BigDecimal foodCostsPercentageOfUserSalaryBD = userService
                 .calculateFoodCostsCostPercentageOfUserSalaryForMonthlyCosts(userId,month);
 
         MonthlyCosts monthlyCosts = monthlyCostsService.getMonthlyCostsForUserByMonth(userId,month);
 
         MonthlyCostsSummary monthlyCostsSummary = monthlyCostsService.getOrCreateMonthlyCostsSummary(monthlyCosts);
 
-        monthlyCostsSummary.setFoodCostsPercentageOfUserSalary(foodCostsPercentageOdUserSalaryBD);
+        monthlyCostsSummary.setFoodCostsPercentageOfUserSalary(foodCostsPercentageOfUserSalaryBD);
         monthlyCostsService.createMonthlyCostsSummaryForUser(monthlyCostsSummary);
 
-        return ResponseEntity.ok(foodCostsPercentageOdUserSalaryBD);
+        return ResponseEntity.ok(foodCostsPercentageOfUserSalaryBD);
 
     }
 
     @PostMapping("/current_electricity_bill-percentage")
     public ResponseEntity<BigDecimal> createCurrentElectricityBillPercentageOfUserSalary(@PathVariable Long userId,
                                                                        @RequestParam int month){
-        BigDecimal currentElectricityBillPercentageOdUserSalaryBD = userService
+        BigDecimal currentElectricityBillPercentageOfUserSalaryBD = userService
                 .calculateCurrentElectricityBillCostPercentageOfUserSalaryForMonthlyCosts(userId, month);
 
         MonthlyCosts monthlyCosts = monthlyCostsService.getMonthlyCostsForUserByMonth(userId,month);
 
         MonthlyCostsSummary monthlyCostsSummary = monthlyCostsService.getOrCreateMonthlyCostsSummary(monthlyCosts);
 
-        monthlyCostsSummary.setCurrentElectricityBillPercentageOfUserSalary(currentElectricityBillPercentageOdUserSalaryBD);
+        monthlyCostsSummary.setCurrentElectricityBillPercentageOfUserSalary(currentElectricityBillPercentageOfUserSalaryBD);
         monthlyCostsService.createMonthlyCostsSummaryForUser(monthlyCostsSummary);
 
-        return ResponseEntity.ok(currentElectricityBillPercentageOdUserSalaryBD);
+        return ResponseEntity.ok(currentElectricityBillPercentageOfUserSalaryBD);
     }
 
     @PostMapping("/current_gas_bill-percentage")
     public ResponseEntity<BigDecimal> createCurrentGasBillPercentageOfUserSalary(@PathVariable Long userId,
                                                                                  @RequestParam int month){
-        BigDecimal currentGasBillPercentageOdUserSalaryBD = userService
+        BigDecimal currentGasBillPercentageOfUserSalaryBD = userService
                 .calculateCurrentGasBillCostPercentageOfUserSalaryForMonthlyCosts(userId, month);
 
         MonthlyCosts monthlyCosts = monthlyCostsService.getMonthlyCostsForUserByMonth(userId,month);
 
         MonthlyCostsSummary monthlyCostsSummary = monthlyCostsService.getOrCreateMonthlyCostsSummary(monthlyCosts);
 
-        monthlyCostsSummary.setCurrentGasBillPercentageOfUserSalary(currentGasBillPercentageOdUserSalaryBD);
+        monthlyCostsSummary.setCurrentGasBillPercentageOfUserSalary(currentGasBillPercentageOfUserSalaryBD);
         monthlyCostsService.createMonthlyCostsSummaryForUser(monthlyCostsSummary);
 
-        return ResponseEntity.ok(currentGasBillPercentageOdUserSalaryBD);
+        return ResponseEntity.ok(currentGasBillPercentageOfUserSalaryBD);
+    }
+
+    @PostMapping("/total_car_service-percentage")
+    public ResponseEntity<BigDecimal> createTotalCarServicePercentageOfUserSalary(@PathVariable Long userId,
+                                                                                 @RequestParam int month){
+        BigDecimal totalCarServicePercentageOfUserSalaryBD = userService
+                .calculateTotalCarServiceCostsPercentageOfUserSalaryForMonthlyCosts(userId, month);
+
+        MonthlyCosts monthlyCosts = monthlyCostsService.getMonthlyCostsForUserByMonth(userId,month);
+
+        MonthlyCostsSummary monthlyCostsSummary = monthlyCostsService.getOrCreateMonthlyCostsSummary(monthlyCosts);
+
+        monthlyCostsSummary.setTotalCarServicePercentageOfUserSalary(totalCarServicePercentageOfUserSalaryBD);
+        monthlyCostsService.createMonthlyCostsSummaryForUser(monthlyCostsSummary);
+
+        return ResponseEntity.ok(totalCarServicePercentageOfUserSalaryBD);
+    }
+
+    @PostMapping("/car_insurance_costs-percentage")
+    public ResponseEntity<BigDecimal> createCarInsuranceCostsPercentageOfUserSalary(@PathVariable Long userId,
+                                                                                  @RequestParam int month){
+        BigDecimal carInsuranceCostsPercentageOfUserSalaryBD = userService
+                .calculateCarInsuranceCostsPercentageOfUserSalaryForMonthlyCosts(userId, month);
+
+        MonthlyCosts monthlyCosts = monthlyCostsService.getMonthlyCostsForUserByMonth(userId,month);
+
+        MonthlyCostsSummary monthlyCostsSummary = monthlyCostsService.getOrCreateMonthlyCostsSummary(monthlyCosts);
+
+        monthlyCostsSummary.setCarInsuranceCostsPercentageOfUserSalary(carInsuranceCostsPercentageOfUserSalaryBD);
+        monthlyCostsService.createMonthlyCostsSummaryForUser(monthlyCostsSummary);
+
+        return ResponseEntity.ok(carInsuranceCostsPercentageOfUserSalaryBD);
+    }
+
+    @PostMapping("/car_operating_costs-percentage")
+    public ResponseEntity<BigDecimal> createCarOperatingCostsPercentageOfUserSalary(@PathVariable Long userId,
+                                                                                    @RequestParam int month){
+        BigDecimal carOperatingCostsPercentageOfUserSalaryBD = userService
+                .calculateCarOperatingCostsPercentageOfUserSalaryForMonthlyCosts(userId, month);
+
+        MonthlyCosts monthlyCosts = monthlyCostsService.getMonthlyCostsForUserByMonth(userId,month);
+
+        MonthlyCostsSummary monthlyCostsSummary = monthlyCostsService.getOrCreateMonthlyCostsSummary(monthlyCosts);
+
+        monthlyCostsSummary.setCarOperatingCostsPercentageOfUserSalary(carOperatingCostsPercentageOfUserSalaryBD);
+        monthlyCostsService.createMonthlyCostsSummaryForUser(monthlyCostsSummary);
+
+        return ResponseEntity.ok(carOperatingCostsPercentageOfUserSalaryBD);
     }
 
     @PostMapping("/costs-percentage")
@@ -135,6 +183,21 @@ public class MonthlyCostsSummaryController {
                 .orElseThrow(() -> new MonthlyCostsSummaryNotFoundException("No monthly costs summary found for user with id " + userId));
 
         return ResponseEntity.ok(monthlyCostsSummary);
+     }
+
+     @PostMapping("/count_net_salary_after_costs")
+    public ResponseEntity<BigDecimal> createNetSalaryAfterCostsForUserByMonth(@PathVariable Long userId, @RequestParam int month){
+
+        BigDecimal netSalaryAfterCostsBD = userService.calculateNetSalaryAfterCostsForUser(userId, month);
+
+         MonthlyCosts monthlyCosts = monthlyCostsService.getMonthlyCostsForUserByMonth(userId, month);
+
+         MonthlyCostsSummary monthlyCostsSummary = monthlyCostsService.getOrCreateMonthlyCostsSummary(monthlyCosts);
+
+         monthlyCostsSummary.setNetSalaryAfterCosts(netSalaryAfterCostsBD);
+         monthlyCostsService.createMonthlyCostsSummaryForUser(monthlyCostsSummary);
+
+        return ResponseEntity.ok(netSalaryAfterCostsBD);
      }
 
 }

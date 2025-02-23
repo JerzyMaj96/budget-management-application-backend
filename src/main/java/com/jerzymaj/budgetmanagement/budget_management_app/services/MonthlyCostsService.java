@@ -1,5 +1,6 @@
 package com.jerzymaj.budgetmanagement.budget_management_app.services;
 
+import com.jerzymaj.budgetmanagement.budget_management_app.exceptions.MonthlyCostsSummaryNotFoundException;
 import com.jerzymaj.budgetmanagement.budget_management_app.jpa_repositories.MonthlyCostsRepository;
 import com.jerzymaj.budgetmanagement.budget_management_app.exceptions.MonthlyCostsNotFoundException;
 import com.jerzymaj.budgetmanagement.budget_management_app.jpa_repositories.MonthlyCostsSummaryRepository;
@@ -70,15 +71,33 @@ public class MonthlyCostsService {
         throw new MonthlyCostsNotFoundException("No monthly costs found for month " + Month.of(month).name().toLowerCase());
     }
 
-    public double addUpAllMonthlyCostsForUser(Long userId, Long monthlyCostsId ) {
-        List<MonthlyCosts> monthlyCosts = monthlyCostsRepository.findByUserId(userId);
+    public double addUpAllMonthlyCostsForUser(Long monthlyCostsId ) {
+        MonthlyCosts monthlyCosts = getMonthlyCostsById(monthlyCostsId).get();
 
-        for (MonthlyCosts monthlyCost : monthlyCosts)
-            if (Objects.equals(monthlyCost.getId(), monthlyCostsId)) {
-                return monthlyCost.getRent() + monthlyCost.getFoodCosts() +
-                        monthlyCost.getCurrentElectricityBill() + monthlyCost.getCurrentGasBill();
-            }
-        throw new MonthlyCostsNotFoundException("No monthly costs found with id " + monthlyCostsId + " for user " + userId);
+        double rent = monthlyCosts.getRent();
+        double foodCosts = monthlyCosts.getFoodCosts();
+        double electricity = monthlyCosts.getCurrentElectricityBill();
+        double gas = monthlyCosts.getCurrentGasBill();
+        double carServiceCosts = monthlyCosts.getTotalCarServiceCosts() != null ? monthlyCosts.getTotalCarServiceCosts() : 0.0;
+        double carInsuranceCosts = monthlyCosts.getCarInsuranceCosts() != null ? monthlyCosts.getCarInsuranceCosts() : 0.0;
+        double carOperatingCosts = monthlyCosts.getCarOperatingCosts() != null ? monthlyCosts.getCarOperatingCosts() : 0.0;
+
+        return rent + foodCosts + electricity + gas + carServiceCosts + carInsuranceCosts + carOperatingCosts;
     }
 
+    public Optional<MonthlyCostsSummary> getMonthlyCostsSummaryForUserByMonth(Long userId, int month) {
+        List<MonthlyCosts> monthlyCostsList = getMonthlyCostsByUserId(userId);
+
+        if (monthlyCostsList.isEmpty())
+            throw new MonthlyCostsNotFoundException("User with id " + userId + " has no monthly costs.");
+
+
+        for (MonthlyCosts monthlyCost : monthlyCostsList)
+            if (monthlyCost.getLastModifiedDate().getMonth() == Month.of(month))
+                return getMonthlyCostsSummaryByMonthlyCostsId(monthlyCost.getId());
+
+
+        throw new MonthlyCostsSummaryNotFoundException("No monthly cost summary found for user " + userId + " in month " + month);
+    }
 }
+

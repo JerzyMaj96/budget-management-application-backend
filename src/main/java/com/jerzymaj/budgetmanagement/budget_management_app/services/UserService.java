@@ -1,9 +1,12 @@
 package com.jerzymaj.budgetmanagement.budget_management_app.services;
 
 import com.jerzymaj.budgetmanagement.budget_management_app.exceptions.MonthlyCostsNotFoundException;
+import com.jerzymaj.budgetmanagement.budget_management_app.exceptions.MonthlyCostsSumNotFoundException;
+import com.jerzymaj.budgetmanagement.budget_management_app.exceptions.MonthlyCostsSummaryNotFoundException;
 import com.jerzymaj.budgetmanagement.budget_management_app.exceptions.UserNotFoundException;
 import com.jerzymaj.budgetmanagement.budget_management_app.jpa_repositories.UserRepository;
 import com.jerzymaj.budgetmanagement.budget_management_app.models.MonthlyCosts;
+import com.jerzymaj.budgetmanagement.budget_management_app.models.MonthlyCostsSummary;
 import com.jerzymaj.budgetmanagement.budget_management_app.models.User;
 import org.springframework.stereotype.Service;
 
@@ -87,6 +90,44 @@ public class UserService {
         return BigDecimal.valueOf(currentGasBillPercentageOdUserSalary).setScale(2, RoundingMode.HALF_UP);
     }
 
+    public BigDecimal calculateTotalCarServiceCostsPercentageOfUserSalaryForMonthlyCosts(Long userId,
+                                                                                         int month){
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found: " + userId));
+
+        MonthlyCosts monthlyCosts = monthlyCostsService.getMonthlyCostsForUserByMonth(userId,month);
+
+        double totalCarServiceCostsPercentageOdUserSalary =
+                monthlyCosts.getTotalCarServiceCosts() / user.getNetSalary() * 100;
+
+        return BigDecimal.valueOf(totalCarServiceCostsPercentageOdUserSalary).setScale(2,RoundingMode.HALF_UP);
+    }
+
+    public BigDecimal calculateCarInsuranceCostsPercentageOfUserSalaryForMonthlyCosts(Long userId,
+                                                                                         int month){
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found: " + userId));
+
+        MonthlyCosts monthlyCosts = monthlyCostsService.getMonthlyCostsForUserByMonth(userId,month);
+
+        double carInsuranceCostsPercentageOdUserSalary =
+                monthlyCosts.getCarInsuranceCosts() / user.getNetSalary() * 100;
+
+        return BigDecimal.valueOf(carInsuranceCostsPercentageOdUserSalary).setScale(2,RoundingMode.HALF_UP);
+    }
+
+    public BigDecimal calculateCarOperatingCostsPercentageOfUserSalaryForMonthlyCosts(Long userId,
+                                                                                      int month){
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found: " + userId));
+
+        MonthlyCosts monthlyCosts = monthlyCostsService.getMonthlyCostsForUserByMonth(userId,month);
+
+        double carOperatingCostsPercentageOdUserSalary =
+                monthlyCosts.getCarOperatingCosts() / user.getNetSalary() * 100;
+
+        return BigDecimal.valueOf(carOperatingCostsPercentageOdUserSalary).setScale(2,RoundingMode.HALF_UP);
+    }
 
 
     public BigDecimal calculateAllCostsPercentageOfUserSalaryForMonthlyCosts(Long userId, int month) {
@@ -95,10 +136,30 @@ public class UserService {
 
         MonthlyCosts monthlyCosts = monthlyCostsService.getMonthlyCostsForUserByMonth(userId, month);
 
-        double totalCosts = monthlyCostsService.addUpAllMonthlyCostsForUser(userId, monthlyCosts.getId());
+        double totalCosts = monthlyCostsService.addUpAllMonthlyCostsForUser(monthlyCosts.getId());
 
         double costsPercentageOfUserSalary = totalCosts / user.getNetSalary() * 100;
 
         return BigDecimal.valueOf(costsPercentageOfUserSalary).setScale(2, RoundingMode.HALF_UP);
+    }
+
+    public BigDecimal calculateNetSalaryAfterCostsForUser(Long userId, int month){
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found: " + userId));
+
+        MonthlyCosts monthlyCosts = monthlyCostsService.getMonthlyCostsForUserByMonth(userId, month);
+
+        MonthlyCostsSummary monthlyCostsSummary = monthlyCostsService
+                .getMonthlyCostsSummaryForUserByMonth(userId, month).get();
+
+       if(monthlyCostsSummary.getMonthlyCostsSum() == null){
+           throw new MonthlyCostsSumNotFoundException("Monthly costs sum hasn't been set for user id: " + userId);
+       }
+
+       double monthlyCostsSum = monthlyCostsSummary.getMonthlyCostsSum();
+
+       double netSalaryAfterCosts = user.getNetSalary() - monthlyCostsSum;
+
+       return BigDecimal.valueOf(netSalaryAfterCosts).setScale(2,RoundingMode.HALF_UP);
     }
 }

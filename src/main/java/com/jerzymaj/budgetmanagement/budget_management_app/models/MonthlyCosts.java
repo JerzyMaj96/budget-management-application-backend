@@ -1,6 +1,7 @@
 package com.jerzymaj.budgetmanagement.budget_management_app.models;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
@@ -33,6 +34,18 @@ public class MonthlyCosts {
     @Positive
     private double currentGasBill;
 
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @Positive
+    private Double totalCarServiceCosts;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @Positive
+    private Double carInsuranceCosts;
+
+    @JsonInclude(JsonInclude.Include.NON_NULL)
+    @Positive
+    private Double carOperatingCosts;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     @JsonIgnore
@@ -52,11 +65,15 @@ public class MonthlyCosts {
 
     public MonthlyCosts() {}
 
-    public MonthlyCosts(double rent, double foodCosts, double currentElectricityBill, double currentGasBill) {
+    public MonthlyCosts(double rent, double foodCosts, double currentElectricityBill, double currentGasBill,
+                        double totalCarServiceCosts, double carInsuranceCosts, double carOperatingCosts) {
         this.rent = rent;
         this.foodCosts = foodCosts;
         this.currentElectricityBill = currentElectricityBill;
         this.currentGasBill = currentGasBill;
+        this.totalCarServiceCosts = totalCarServiceCosts;
+        this.carInsuranceCosts = carInsuranceCosts;
+        this.carOperatingCosts = carOperatingCosts;
     }
 
     public Long getId() {
@@ -99,6 +116,30 @@ public class MonthlyCosts {
         this.currentGasBill = currentGasBill;
     }
 
+    public Double getTotalCarServiceCosts() {
+        return totalCarServiceCosts;
+    }
+
+    public void setTotalCarServiceCosts(Double totalCarServiceCosts) {
+        this.totalCarServiceCosts = totalCarServiceCosts;
+    }
+
+    public Double getCarInsuranceCosts() {
+        return carInsuranceCosts;
+    }
+
+    public void setCarInsuranceCosts(Double carInsuranceCosts) {
+        this.carInsuranceCosts = carInsuranceCosts;
+    }
+
+    public Double getCarOperatingCosts() {
+        return carOperatingCosts;
+    }
+
+    public void setCarOperatingCosts(Double carOperatingCosts) {
+        this.carOperatingCosts = carOperatingCosts;
+    }
+
     public User getUser() {
         return user;
     }
@@ -135,9 +176,13 @@ public class MonthlyCosts {
                 ", foodCosts=" + foodCosts +
                 ", currentElectricityBill=" + currentElectricityBill +
                 ", currentGasBill=" + currentGasBill +
+                ", totalCarServiceCosts=" + totalCarServiceCosts +
+                ", carInsuranceCosts=" + carInsuranceCosts +
+                ", carOperatingCosts=" + carOperatingCosts +
+                ", user=" + user +
                 ", createDate=" + createDate +
-                ", lastModifiedDate=" + lastModifiedDate +
                 ", deleteDate=" + deleteDate +
+                ", lastModifiedDate=" + lastModifiedDate +
                 '}';
     }
 }
