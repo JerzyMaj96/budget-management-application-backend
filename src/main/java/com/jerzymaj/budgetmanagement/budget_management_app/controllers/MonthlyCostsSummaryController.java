@@ -34,7 +34,7 @@ public class MonthlyCostsSummaryController {
 
         MonthlyCosts monthlyCosts = monthlyCostsService.getMonthlyCostsForUserByMonth(userId, month);
 
-        double monthlyCostsSum = monthlyCostsService.addUpAllMonthlyCostsForUser(monthlyCosts.getId());
+        double monthlyCostsSum = monthlyCostsService.addUpAllMonthlyCostsForUser(userId, month);
 
         MonthlyCostsSummary monthlyCostsSummary = monthlyCostsService.getOrCreateMonthlyCostsSummary(monthlyCosts);
 

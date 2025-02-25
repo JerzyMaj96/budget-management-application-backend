@@ -71,8 +71,8 @@ public class MonthlyCostsService {
         throw new MonthlyCostsNotFoundException("No monthly costs found for month " + Month.of(month).name().toLowerCase());
     }
 
-    public double addUpAllMonthlyCostsForUser(Long monthlyCostsId ) {
-        MonthlyCosts monthlyCosts = getMonthlyCostsById(monthlyCostsId).get();
+    public double addUpAllMonthlyCostsForUser(Long userId, int month ) {
+        MonthlyCosts monthlyCosts = getMonthlyCostsForUserByMonth(userId, month);
 
         double rent = monthlyCosts.getRent();
         double foodCosts = monthlyCosts.getFoodCosts();

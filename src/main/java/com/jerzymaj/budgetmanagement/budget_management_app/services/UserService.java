@@ -97,8 +97,9 @@ public class UserService {
 
         MonthlyCosts monthlyCosts = monthlyCostsService.getMonthlyCostsForUserByMonth(userId,month);
 
-        double totalCarServiceCostsPercentageOdUserSalary =
-                monthlyCosts.getTotalCarServiceCosts() / user.getNetSalary() * 100;
+        double totalCarServiceCosts = monthlyCosts.getTotalCarServiceCosts() != null ? monthlyCosts.getTotalCarServiceCosts() : 0.0;
+
+        double totalCarServiceCostsPercentageOdUserSalary = totalCarServiceCosts / user.getNetSalary() * 100;
 
         return BigDecimal.valueOf(totalCarServiceCostsPercentageOdUserSalary).setScale(2,RoundingMode.HALF_UP);
     }
@@ -110,8 +111,9 @@ public class UserService {
 
         MonthlyCosts monthlyCosts = monthlyCostsService.getMonthlyCostsForUserByMonth(userId,month);
 
-        double carInsuranceCostsPercentageOdUserSalary =
-                monthlyCosts.getCarInsuranceCosts() / user.getNetSalary() * 100;
+        double carInsuranceCosts = monthlyCosts.getCarInsuranceCosts() != null ? monthlyCosts.getCarInsuranceCosts() : 0.0;
+
+        double carInsuranceCostsPercentageOdUserSalary = carInsuranceCosts / user.getNetSalary() * 100;
 
         return BigDecimal.valueOf(carInsuranceCostsPercentageOdUserSalary).setScale(2,RoundingMode.HALF_UP);
     }
@@ -123,8 +125,9 @@ public class UserService {
 
         MonthlyCosts monthlyCosts = monthlyCostsService.getMonthlyCostsForUserByMonth(userId,month);
 
-        double carOperatingCostsPercentageOdUserSalary =
-                monthlyCosts.getCarOperatingCosts() / user.getNetSalary() * 100;
+        double carOperatingCosts = monthlyCosts.getCarOperatingCosts() != null ? monthlyCosts.getCarOperatingCosts() : 0.0;
+
+        double carOperatingCostsPercentageOdUserSalary = carOperatingCosts / user.getNetSalary() * 100;
 
         return BigDecimal.valueOf(carOperatingCostsPercentageOdUserSalary).setScale(2,RoundingMode.HALF_UP);
     }
@@ -136,7 +139,7 @@ public class UserService {
 
         MonthlyCosts monthlyCosts = monthlyCostsService.getMonthlyCostsForUserByMonth(userId, month);
 
-        double totalCosts = monthlyCostsService.addUpAllMonthlyCostsForUser(monthlyCosts.getId());
+        double totalCosts = monthlyCostsService.addUpAllMonthlyCostsForUser(userId, month);
 
         double costsPercentageOfUserSalary = totalCosts / user.getNetSalary() * 100;
 
