@@ -9,7 +9,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
-@Entity(name = "monthly_costs_results")
+@Entity(name = "monthly_costs_summary")
 public class MonthlyCostsSummary {
 
     @Id
@@ -35,6 +35,10 @@ public class MonthlyCostsSummary {
     private BigDecimal costsPercentageOfUserSalary;
 
     private BigDecimal netSalaryAfterCosts;
+
+    @Lob
+    @Column(name = "financial_advice", columnDefinition = "TEXT")
+    private String financialAdvice;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "monthly_costs_id", unique = true)
@@ -160,6 +164,14 @@ public class MonthlyCostsSummary {
 
     public void setNetSalaryAfterCosts(BigDecimal netSalaryAfterCosts) {
         this.netSalaryAfterCosts = netSalaryAfterCosts;
+    }
+
+    public String getFinancialAdvice() {
+        return financialAdvice;
+    }
+
+    public void setFinancialAdvice(String financialAdvice) {
+        this.financialAdvice = financialAdvice;
     }
 
     public MonthlyCosts getMonthlyCosts() {

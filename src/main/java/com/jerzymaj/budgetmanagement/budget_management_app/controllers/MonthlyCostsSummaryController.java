@@ -1,21 +1,17 @@
 package com.jerzymaj.budgetmanagement.budget_management_app.controllers;
 
-import com.jerzymaj.budgetmanagement.budget_management_app.exceptions.MonthlyCostsNotFoundException;
 import com.jerzymaj.budgetmanagement.budget_management_app.exceptions.MonthlyCostsSummaryNotFoundException;
-import com.jerzymaj.budgetmanagement.budget_management_app.exceptions.UserNotFoundException;
+import com.jerzymaj.budgetmanagement.budget_management_app.exceptions.NetSalaryAfterCostsNotFoundException;
 import com.jerzymaj.budgetmanagement.budget_management_app.models.MonthlyCosts;
 import com.jerzymaj.budgetmanagement.budget_management_app.models.MonthlyCostsSummary;
+import com.jerzymaj.budgetmanagement.budget_management_app.services.GPTService;
 import com.jerzymaj.budgetmanagement.budget_management_app.services.MonthlyCostsService;
 import com.jerzymaj.budgetmanagement.budget_management_app.services.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
-import java.math.RoundingMode;
 import java.time.Month;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/budget-management/users/{userId}/monthly_costs")
@@ -185,7 +181,7 @@ public class MonthlyCostsSummaryController {
         return ResponseEntity.ok(monthlyCostsSummary);
      }
 
-     @PostMapping("/count_net_salary_after_costs")
+     @PostMapping("/net_salary_after_costs")
     public ResponseEntity<BigDecimal> createNetSalaryAfterCostsForUserByMonth(@PathVariable Long userId, @RequestParam int month){
 
         BigDecimal netSalaryAfterCostsBD = userService.calculateNetSalaryAfterCostsForUser(userId, month);
@@ -200,4 +196,31 @@ public class MonthlyCostsSummaryController {
         return ResponseEntity.ok(netSalaryAfterCostsBD);
      }
 
+    @PostMapping("/advice")
+    public String getOrCreateFinancialAdvice(@PathVariable Long userId, @RequestParam int month) {
+
+        MonthlyCostsSummary monthlyCostsSummary = monthlyCostsService.getMonthlyCostsSummaryForUserByMonth(userId,month)
+                .orElseThrow(() -> new MonthlyCostsSummaryNotFoundException("No monthly costs summary found for user with id " + userId));
+
+        BigDecimal netSalaryAfterCostsNow = userService.calculateNetSalaryAfterCostsForUser(userId, month);
+
+        BigDecimal netSalaryAfterCostsPrevious = monthlyCostsSummary.getNetSalaryAfterCosts();
+
+        if(netSalaryAfterCostsPrevious == null && netSalaryAfterCostsNow == null)
+            throw new NetSalaryAfterCostsNotFoundException("No net salary after costs found for user: " + userId +
+                    "in month " + Month.of(month).name().toLowerCase());
+
+        if(monthlyCostsSummary.getFinancialAdvice() != null && netSalaryAfterCostsNow.compareTo(netSalaryAfterCostsPrevious) == 0){
+            return monthlyCostsSummary.getFinancialAdvice();
+        }
+        String prompt = userService.generatePromptBasedOnSalary(netSalaryAfterCostsNow);
+
+        String financialAdvice = GPTService.getAdviceFromGPT(prompt);
+
+        monthlyCostsSummary.setFinancialAdvice(financialAdvice);
+        monthlyCostsService.createMonthlyCostsSummaryForUser(monthlyCostsSummary);
+
+        return financialAdvice;
+
+    }
 }

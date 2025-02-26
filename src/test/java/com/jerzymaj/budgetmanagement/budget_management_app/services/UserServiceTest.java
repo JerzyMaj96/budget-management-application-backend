@@ -2,6 +2,7 @@ package com.jerzymaj.budgetmanagement.budget_management_app.services;
 
 import com.jerzymaj.budgetmanagement.budget_management_app.jpa_repositories.UserRepository;
 import com.jerzymaj.budgetmanagement.budget_management_app.models.MonthlyCosts;
+import com.jerzymaj.budgetmanagement.budget_management_app.models.MonthlyCostsSummary;
 import com.jerzymaj.budgetmanagement.budget_management_app.models.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,6 +33,7 @@ public class UserServiceTest {
 
     private User testUser;
     private MonthlyCosts testMonthlyCosts;
+    private MonthlyCostsSummary testMonthlyCostsSummary;
     @BeforeEach
     public void setUp(){
         testUser = new User();
@@ -46,6 +48,9 @@ public class UserServiceTest {
         testMonthlyCosts.setTotalCarServiceCosts(3000.0);
         testMonthlyCosts.setCarInsuranceCosts(2000.0);
         testMonthlyCosts.setCarOperatingCosts(null);
+
+        testMonthlyCostsSummary = new MonthlyCostsSummary();
+        testMonthlyCostsSummary.setMonthlyCostsSum(1000.0);
     }
 
     @Test
@@ -135,5 +140,49 @@ public class UserServiceTest {
 
         assertEquals(expectedResult, actualResult);
 
+    }
+
+    @Test
+    public void testCalculateAllCostsPercentageOfUserSalaryForMonthlyCosts(){
+
+        double totalCarServiceCosts = testMonthlyCosts.getTotalCarServiceCosts() != null ? testMonthlyCosts.getTotalCarServiceCosts() : 0.0;
+        double carInsuranceCosts = testMonthlyCosts.getCarInsuranceCosts() != null ? testMonthlyCosts.getCarInsuranceCosts() : 0.0;
+        double carOperatingCosts = testMonthlyCosts.getCarOperatingCosts() != null ? testMonthlyCosts.getCarOperatingCosts() : 0.0;
+
+        double totalCosts = testMonthlyCosts.getRent() + testMonthlyCosts.getFoodCosts() +
+                testMonthlyCosts.getCurrentElectricityBill() + testMonthlyCosts.getCurrentGasBill() +
+                totalCarServiceCosts + carInsuranceCosts + carOperatingCosts;
+
+        when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
+
+        when(monthlyCostsService.addUpAllMonthlyCostsForUser(1L,1)).thenReturn(totalCosts);
+
+        double costsPercentageOfUserSalary = totalCosts/ testUser.getNetSalary() * 100;
+
+        BigDecimal actualResult = userService.calculateAllCostsPercentageOfUserSalaryForMonthlyCosts(1L,1);
+
+        BigDecimal expectedResult = BigDecimal.valueOf(costsPercentageOfUserSalary).setScale(2,RoundingMode.HALF_UP);
+
+        assertEquals(expectedResult,actualResult);
+    }
+
+
+    @Test
+    public void testCalculateNetSalaryAfterCostsForUser(){
+
+        when(userRepository.findById(1L)).thenReturn(Optional.of(testUser));
+
+        when(monthlyCostsService.getMonthlyCostsSummaryForUserByMonth(1L,1))
+                .thenReturn(Optional.of(testMonthlyCostsSummary));
+
+        double monthlyCostsSum = testMonthlyCostsSummary.getMonthlyCostsSum();
+
+        double netSalaryAfterCosts = testUser.getNetSalary() - monthlyCostsSum;
+
+        BigDecimal actualResult = userService.calculateNetSalaryAfterCostsForUser(1L,1);
+
+        BigDecimal expectedResult = BigDecimal.valueOf(netSalaryAfterCosts).setScale(2,RoundingMode.HALF_UP);
+
+        assertEquals(expectedResult,actualResult);
     }
 }

@@ -137,8 +137,6 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found: " + userId));
 
-        MonthlyCosts monthlyCosts = monthlyCostsService.getMonthlyCostsForUserByMonth(userId, month);
-
         double totalCosts = monthlyCostsService.addUpAllMonthlyCostsForUser(userId, month);
 
         double costsPercentageOfUserSalary = totalCosts / user.getNetSalary() * 100;
@@ -150,10 +148,9 @@ public class UserService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found: " + userId));
 
-        MonthlyCosts monthlyCosts = monthlyCostsService.getMonthlyCostsForUserByMonth(userId, month);
-
         MonthlyCostsSummary monthlyCostsSummary = monthlyCostsService
-                .getMonthlyCostsSummaryForUserByMonth(userId, month).get();
+                .getMonthlyCostsSummaryForUserByMonth(userId, month)
+                .orElseThrow(() -> new MonthlyCostsSumNotFoundException("Monthly costs sum hasn't been set for user id: " + userId));
 
        if(monthlyCostsSummary.getMonthlyCostsSum() == null){
            throw new MonthlyCostsSumNotFoundException("Monthly costs sum hasn't been set for user id: " + userId);
@@ -164,5 +161,18 @@ public class UserService {
        double netSalaryAfterCosts = user.getNetSalary() - monthlyCostsSum;
 
        return BigDecimal.valueOf(netSalaryAfterCosts).setScale(2,RoundingMode.HALF_UP);
+    }
+
+    public String generatePromptBasedOnSalary(BigDecimal netSalaryAfterCosts) {
+        if (netSalaryAfterCosts.compareTo(BigDecimal.valueOf(5000)) < 0) {
+            return "How can I successfully save money, if my salary after costs subtraction is "
+                    + netSalaryAfterCosts + "PLN and what should I invest in ?";
+        } else if (netSalaryAfterCosts.compareTo(BigDecimal.valueOf(10000)) > 0) {
+            return "How can I invest and manage my money better, if my salary after costs subtraction is "
+                    + netSalaryAfterCosts + " PLN?";
+        } else {
+            return " How can I manage my money better, if my salary after costs subtraction is around"
+                    + netSalaryAfterCosts + " PLN per month?";
+        }
     }
 }
