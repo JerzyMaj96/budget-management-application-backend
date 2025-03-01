@@ -1,5 +1,7 @@
 package com.jerzymaj.budgetmanagement.budget_management_app.services;
 
+import com.jerzymaj.budgetmanagement.budget_management_app.DTOs.MonthlyCostsDTO;
+import com.jerzymaj.budgetmanagement.budget_management_app.DTOs.MonthlyCostsSummaryDTO;
 import com.jerzymaj.budgetmanagement.budget_management_app.exceptions.MonthlyCostsSummaryNotFoundException;
 import com.jerzymaj.budgetmanagement.budget_management_app.jpa_repositories.MonthlyCostsRepository;
 import com.jerzymaj.budgetmanagement.budget_management_app.exceptions.MonthlyCostsNotFoundException;
@@ -8,6 +10,7 @@ import com.jerzymaj.budgetmanagement.budget_management_app.models.MonthlyCosts;
 import com.jerzymaj.budgetmanagement.budget_management_app.models.MonthlyCostsSummary;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.Month;
 import java.util.List;
 import java.util.Optional;
@@ -97,6 +100,52 @@ public class MonthlyCostsService {
 
 
         throw new MonthlyCostsSummaryNotFoundException("No monthly cost summary found for user " + userId + " in month " + month);
+    }
+
+    public MonthlyCostsDTO convertMonthlyCostsToDTO(MonthlyCosts monthlyCosts) {
+        return new MonthlyCostsDTO(
+                monthlyCosts.getId(),
+                monthlyCosts.getRent(),
+                monthlyCosts.getFoodCosts(),
+                monthlyCosts.getCurrentElectricityBill(),
+                monthlyCosts.getCurrentGasBill(),
+                monthlyCosts.getTotalCarServiceCosts(),
+                monthlyCosts.getCarInsuranceCosts(),
+                monthlyCosts.getCarOperatingCosts(),
+                monthlyCosts.getCreateDate()
+        );
+    }
+
+    public MonthlyCostsSummaryDTO convertMonthlyCostsSummaryToDTO(MonthlyCostsSummary summary) {
+        return new MonthlyCostsSummaryDTO(summary.getId(),
+                summary.getMonthlyCostsSum(),
+                summary.getRentPercentageOfUserSalary(),
+                summary.getFoodCostsPercentageOfUserSalary(),
+                summary.getCurrentElectricityBillPercentageOfUserSalary(),
+                summary.getCurrentGasBillPercentageOfUserSalary(),
+                summary.getTotalCarServicePercentageOfUserSalary(),
+                summary.getCarInsuranceCostsPercentageOfUserSalary(),
+                summary.getCarOperatingCostsPercentageOfUserSalary(),
+                summary.getCostsPercentageOfUserSalary(),
+                summary.getNetSalaryAfterCosts(),
+                summary.getFinancialAdvice(),
+                summary.getCreateDate());
+    }
+
+    public void updateMonthlyCostsSummary(Long userId, int month, BigDecimal value, String type) {
+        MonthlyCosts monthlyCosts = getMonthlyCostsForUserByMonth(userId, month);
+        MonthlyCostsSummary monthlyCostsSummary = getOrCreateMonthlyCostsSummary(monthlyCosts);
+
+        switch (type) {
+            case "rent" -> monthlyCostsSummary.setRentPercentageOfUserSalary(value);
+            case "food" -> monthlyCostsSummary.setFoodCostsPercentageOfUserSalary(value);
+            case "electricity" -> monthlyCostsSummary.setCurrentElectricityBillPercentageOfUserSalary(value);
+            case "gas" -> monthlyCostsSummary.setCurrentGasBillPercentageOfUserSalary(value);
+            case "net_salary" -> monthlyCostsSummary.setNetSalaryAfterCosts(value);
+            case "total_costs" -> monthlyCostsSummary.setCostsPercentageOfUserSalary(value);
+        }
+
+        createMonthlyCostsSummaryForUser(monthlyCostsSummary);
     }
 }
 

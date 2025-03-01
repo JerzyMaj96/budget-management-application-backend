@@ -1,5 +1,6 @@
 package com.jerzymaj.budgetmanagement.budget_management_app.controllers;
 
+import com.jerzymaj.budgetmanagement.budget_management_app.DTOs.MonthlyCostsDTO;
 import com.jerzymaj.budgetmanagement.budget_management_app.exceptions.MonthlyCostsNotFoundException;
 import com.jerzymaj.budgetmanagement.budget_management_app.exceptions.UserNotFoundException;
 import com.jerzymaj.budgetmanagement.budget_management_app.models.MonthlyCosts;
@@ -12,9 +13,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.time.Month;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/budget-management/users/{userId}/monthly_costs")
@@ -29,8 +30,8 @@ public class MonthlyCostsController {
     }
 
     @PostMapping
-    public ResponseEntity<MonthlyCosts> createMonthlyCostsForUser(@PathVariable Long userId,
-                                                                  @Valid @RequestBody MonthlyCosts monthlyCosts) {
+    public ResponseEntity<MonthlyCostsDTO> createMonthlyCostsForUser(@PathVariable Long userId,
+                                                                     @Valid @RequestBody MonthlyCostsDTO monthlyCostsDTO) {
         Optional<User> user = userService.getUserById(userId);
 
         if (user.isEmpty())
@@ -39,17 +40,22 @@ public class MonthlyCostsController {
         List<MonthlyCosts> existingMonthlyCostsCheck = monthlyCostsService.getMonthlyCostsByUserId(userId);
 
         for (MonthlyCosts monthlyCost : existingMonthlyCostsCheck)
-            if (monthlyCost.getCreateDate().getMonth() == monthlyCosts.getCreateDate().getMonth()) {
-                monthlyCost.setRent(monthlyCosts.getRent());
-                monthlyCost.setFoodCosts(monthlyCosts.getFoodCosts());
-                monthlyCost.setCurrentElectricityBill(monthlyCosts.getCurrentElectricityBill());
-                monthlyCost.setCurrentGasBill(monthlyCosts.getCurrentGasBill());
+            if (monthlyCost.getCreateDate().getMonth() == monthlyCostsDTO.getCreateDate().getMonth()) {
+                monthlyCost.setRent(monthlyCostsDTO.getRent());
+                monthlyCost.setFoodCosts(monthlyCostsDTO.getFoodCosts());
+                monthlyCost.setCurrentElectricityBill(monthlyCostsDTO.getCurrentElectricityBill());
+                monthlyCost.setCurrentGasBill(monthlyCostsDTO.getCurrentGasBill());
 
                 MonthlyCosts updatedCost = monthlyCostsService.createMonthlyCostsForUser(monthlyCost);
-                return ResponseEntity.ok(updatedCost);
+                return ResponseEntity.ok(monthlyCostsService.convertMonthlyCostsToDTO(updatedCost));
             }
 
+        MonthlyCosts monthlyCosts = new MonthlyCosts();
         monthlyCosts.setUser(user.get());
+        monthlyCosts.setRent(monthlyCostsDTO.getRent());
+        monthlyCosts.setFoodCosts(monthlyCostsDTO.getFoodCosts());
+        monthlyCosts.setCurrentElectricityBill(monthlyCostsDTO.getCurrentElectricityBill());
+        monthlyCosts.setCurrentGasBill(monthlyCostsDTO.getCurrentGasBill());
 
         MonthlyCosts savedMonthlyCosts = monthlyCostsService.createMonthlyCostsForUser(monthlyCosts);
 
@@ -59,44 +65,36 @@ public class MonthlyCostsController {
                 .buildAndExpand(savedMonthlyCosts.getId())
                 .toUri();
 
-
-        return ResponseEntity.created(location).build();
+        return ResponseEntity.created(location).body(monthlyCostsService.convertMonthlyCostsToDTO(savedMonthlyCosts));
     }
 
     @GetMapping("/byUserId")
-    public ResponseEntity<List<MonthlyCosts>> retrieveMonthlyCostsByUserId(@PathVariable Long userId) {
+    public ResponseEntity<List<MonthlyCostsDTO>> retrieveMonthlyCostsByUserId(@PathVariable Long userId) {
         List<MonthlyCosts> monthlyCosts = monthlyCostsService.getMonthlyCostsByUserId(userId);
 
         if (monthlyCosts.isEmpty()) {
             throw new MonthlyCostsNotFoundException("No monthly costs found for user " + userId);
         }
 
-        return ResponseEntity.ok(monthlyCosts);
+        List<MonthlyCostsDTO> dtos = monthlyCosts
+                .stream()
+                .map(monthlyCostsService::convertMonthlyCostsToDTO)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(dtos);
     }
 
     @GetMapping("/byMonth")
-    public ResponseEntity<MonthlyCosts> retrieveMonthlyCostsByUserIdAndMonthOfMonthlyCosts(
+    public ResponseEntity<MonthlyCostsDTO> retrieveMonthlyCostsByUserIdAndMonthOfMonthlyCosts(
             @PathVariable Long userId, @RequestParam int creationMonth) {
 
         if (creationMonth < 1 || creationMonth > 12) {
             throw new IllegalArgumentException("Invalid month: " + creationMonth + ". Month should be between 1 and 12.");
         }
 
-        List<MonthlyCosts> monthlyCosts = monthlyCostsService.getMonthlyCostsByUserId(userId);
+        MonthlyCosts monthlyCosts = monthlyCostsService.getMonthlyCostsForUserByMonth(userId, creationMonth);
 
-        if (monthlyCosts.isEmpty()) {
-            throw new MonthlyCostsNotFoundException("User with id " + userId + " has no monthly costs.");
-        }
-
-        Month requestedMonth = Month.of(creationMonth);
-
-        for (MonthlyCosts monthlyCost : monthlyCosts) {
-            if (monthlyCost.getCreateDate().getMonth() == requestedMonth) {
-                return ResponseEntity.ok(monthlyCost);
-            }
-        }
-
-        throw new MonthlyCostsNotFoundException("User with id " + userId + " has no monthly costs in " +
-                requestedMonth.name().toLowerCase());
+        return ResponseEntity.ok(monthlyCostsService.convertMonthlyCostsToDTO(monthlyCosts));
     }
+
 }

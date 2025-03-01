@@ -1,5 +1,6 @@
 package com.jerzymaj.budgetmanagement.budget_management_app.controllers;
 
+import com.jerzymaj.budgetmanagement.budget_management_app.DTOs.UserDTO;
 import com.jerzymaj.budgetmanagement.budget_management_app.exceptions.UserNotFoundException;
 import com.jerzymaj.budgetmanagement.budget_management_app.models.User;
 import com.jerzymaj.budgetmanagement.budget_management_app.services.UserService;
@@ -11,6 +12,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -26,17 +28,21 @@ public class UserController {
     }
 
     @GetMapping
-    public List<User> retrieveAllUsers() {
-        return userService.getAllUsers();
+    public List<UserDTO> retrieveAllUsers() {
+        return userService.getAllUsers()
+                .stream()
+                .map(user -> new UserDTO(user.getId(), user.getName(), user.getNetSalary()))
+                .collect(Collectors.toList());
     }
 
     @GetMapping("/{userId}")
-    public EntityModel<User> retrieveUserById(@PathVariable Long userId) {
+    public EntityModel<UserDTO> retrieveUserById(@PathVariable Long userId) {
+        User user = userService.getUserById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found: " + userId));
 
-        User user = userService.getUserById(userId).orElseThrow(() -> new UserNotFoundException("User not found: " + userId));
+        UserDTO userDTO = new UserDTO(user.getId(), user.getName(), user.getNetSalary());
 
-        EntityModel<User> entityModel = EntityModel.of(user);
-
+        EntityModel<UserDTO> entityModel = EntityModel.of(userDTO);
         entityModel.add(linkTo(methodOn(this.getClass()).retrieveAllUsers()).withRel("all-users"));
 
         return entityModel;
@@ -48,8 +54,8 @@ public class UserController {
     }
 
     @PostMapping
-    public ResponseEntity<User> createUser(@Valid @RequestBody User user) {
-
+    public ResponseEntity<UserDTO> createUser(@Valid @RequestBody UserDTO userDTO) {
+        User user = new User(userDTO.getId(), userDTO.getName(), userDTO.getNetSalary());
         User savedUser = userService.createUser(user);
 
         URI location = ServletUriComponentsBuilder
@@ -58,7 +64,9 @@ public class UserController {
                 .buildAndExpand(savedUser.getId())
                 .toUri();
 
-        return ResponseEntity.created(location).build();
+        UserDTO savedUserDTO = new UserDTO(savedUser.getId(), savedUser.getName(), savedUser.getNetSalary());
+
+        return ResponseEntity.created(location).body(savedUserDTO);
     }
 
 }
