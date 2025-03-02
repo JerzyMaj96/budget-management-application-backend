@@ -152,6 +152,10 @@ public class MonthlyCosts {
         return createDate;
     }
 
+    public void setCreateDate(LocalDateTime createDate) {
+        this.createDate = createDate;
+    }
+
     public LocalDateTime getDeleteDate() {
         return deleteDate;
     }
