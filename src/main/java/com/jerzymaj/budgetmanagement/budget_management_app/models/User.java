@@ -8,6 +8,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 @Entity(name = "user_details")
 public class User {
@@ -67,7 +68,7 @@ public class User {
     }
 
     public LocalDateTime getCreateDate() {
-        return createDate;
+        return createDate != null ? createDate.truncatedTo(ChronoUnit.MINUTES) : null;
     }
 
     public LocalDateTime getDeleteDate() {

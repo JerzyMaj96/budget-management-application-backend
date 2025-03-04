@@ -1,5 +1,7 @@
 package com.jerzymaj.budgetmanagement.budget_management_app.DTOs;
 
+import jakarta.validation.constraints.NotNull;
+
 import java.time.LocalDateTime;
 
 public class MonthlyCostsDTO {
@@ -92,11 +94,10 @@ public class MonthlyCostsDTO {
         this.carOperatingCosts = carOperatingCosts;
     }
 
-    public LocalDateTime getCreateDate() {
-        return createDate;
-    }
-
     public void setCreateDate(LocalDateTime createDate) {
         this.createDate = createDate;
+    }
+    public LocalDateTime getCreateDate() {
+        return createDate;
     }
 }
