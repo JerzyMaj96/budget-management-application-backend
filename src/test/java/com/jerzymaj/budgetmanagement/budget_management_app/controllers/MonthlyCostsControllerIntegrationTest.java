@@ -14,11 +14,10 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
-import java.time.LocalDateTime;
 import java.time.Month;
-import java.time.temporal.ChronoUnit;
 import java.util.List;
 
+import static org.hamcrest.Matchers.matchesRegex;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -115,9 +114,9 @@ public class MonthlyCostsControllerIntegrationTest {
                 "foodCosts": 500,
                 "currentElectricityBill" : 300,
                 "currentGasBill" : 400,
-                "totalCarServiceCosts" : 100,
-                "carInsuranceCosts" : 1000,
-                "carOperatingCosts" : 400
+                "totalCarServiceCosts" : 100.0,
+                "carInsuranceCosts" : 1000.0,
+                "carOperatingCosts" : 400.0
             }
             """;
 
@@ -129,9 +128,9 @@ public class MonthlyCostsControllerIntegrationTest {
                 .andExpect(jsonPath("$.foodCosts").value(500))
                 .andExpect(jsonPath("$.currentElectricityBill").value(300))
                 .andExpect(jsonPath("$.currentGasBill").value(400))
-                .andExpect(jsonPath("$.totalCarServiceCosts").value(100))
-                .andExpect(jsonPath("$.carInsuranceCosts").value(1000))
-                .andExpect(jsonPath("$.carOperatingCosts").value(400))
-                .andExpect(jsonPath("$.createDate").value(LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES)));
-    } // TO REPAIR
+                .andExpect(jsonPath("$.totalCarServiceCosts").value(100.0))
+                .andExpect(jsonPath("$.carInsuranceCosts").value(1000.0))
+                .andExpect(jsonPath("$.carOperatingCosts").value(400.0))
+                .andExpect(jsonPath("$.createDate").value(matchesRegex("\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:00")));
+    }
 }

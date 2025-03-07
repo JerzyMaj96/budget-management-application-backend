@@ -40,11 +40,18 @@ public class MonthlyCostsController {
         List<MonthlyCosts> existingMonthlyCostsCheck = monthlyCostsService.getMonthlyCostsByUserId(userId);
 
         for (MonthlyCosts monthlyCost : existingMonthlyCostsCheck)
-            if (monthlyCost.getCreateDate().getMonth() == monthlyCostsDTO.getCreateDate().getMonth()) {
+            if (monthlyCost.getCreateDate() != null && monthlyCostsDTO.getCreateDate() != null &&
+                    monthlyCost.getCreateDate().getMonth() == monthlyCostsDTO.getCreateDate().getMonth() &&
+                    monthlyCost.getCreateDate().getYear() == monthlyCostsDTO.getCreateDate().getYear())
+            {
                 monthlyCost.setRent(monthlyCostsDTO.getRent());
                 monthlyCost.setFoodCosts(monthlyCostsDTO.getFoodCosts());
                 monthlyCost.setCurrentElectricityBill(monthlyCostsDTO.getCurrentElectricityBill());
                 monthlyCost.setCurrentGasBill(monthlyCostsDTO.getCurrentGasBill());
+                monthlyCost.setTotalCarServiceCosts(monthlyCostsDTO.getTotalCarServiceCosts());
+                monthlyCost.setCarInsuranceCosts(monthlyCostsDTO.getCarInsuranceCosts());
+                monthlyCost.setCarOperatingCosts(monthlyCostsDTO.getCarOperatingCosts());
+
 
                 MonthlyCosts updatedCost = monthlyCostsService.createMonthlyCostsForUser(monthlyCost);
                 return ResponseEntity.ok(monthlyCostsService.convertMonthlyCostsToDTO(updatedCost));
@@ -56,6 +63,9 @@ public class MonthlyCostsController {
         monthlyCosts.setFoodCosts(monthlyCostsDTO.getFoodCosts());
         monthlyCosts.setCurrentElectricityBill(monthlyCostsDTO.getCurrentElectricityBill());
         monthlyCosts.setCurrentGasBill(monthlyCostsDTO.getCurrentGasBill());
+        monthlyCosts.setTotalCarServiceCosts(monthlyCostsDTO.getTotalCarServiceCosts());
+        monthlyCosts.setCarInsuranceCosts(monthlyCostsDTO.getCarInsuranceCosts());
+        monthlyCosts.setCarOperatingCosts(monthlyCostsDTO.getCarOperatingCosts());
 
         MonthlyCosts savedMonthlyCosts = monthlyCostsService.createMonthlyCostsForUser(monthlyCosts);
 
