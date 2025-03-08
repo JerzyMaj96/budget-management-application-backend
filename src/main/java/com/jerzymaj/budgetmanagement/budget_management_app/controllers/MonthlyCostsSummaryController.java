@@ -97,9 +97,8 @@ public class MonthlyCostsSummaryController {
     @GetMapping("/monthly_costs_summary")
     public ResponseEntity<MonthlyCostsSummaryDTO> retrieveMonthlyCostsSummaryByUserIdAndMonth(@PathVariable Long userId, @RequestParam int month) {
 
-        MonthlyCosts monthlyCosts = monthlyCostsService.getMonthlyCostsForUserByMonth(userId, month);
         MonthlyCostsSummary monthlyCostsSummary = monthlyCostsService
-                .getMonthlyCostsSummaryByMonthlyCostsId(monthlyCosts.getId())
+                .getMonthlyCostsSummaryForUserByMonth(userId,month)
                 .orElseThrow(() -> new MonthlyCostsSummaryNotFoundException("No summary found for user " + userId));
 
         return ResponseEntity.ok(monthlyCostsService.convertMonthlyCostsSummaryToDTO(monthlyCostsSummary));
