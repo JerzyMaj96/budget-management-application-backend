@@ -16,6 +16,9 @@ public class MonthlyCostsSummary {
     @GeneratedValue
     private int id;
 
+    @Version
+    private Integer version;
+
     private Double monthlyCostsSum;
 
     private BigDecimal rentPercentageOfUserSalary;
@@ -84,6 +87,10 @@ public class MonthlyCostsSummary {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public void setVersion(Integer version) {
+        this.version = version;
     }
 
     public Double getMonthlyCostsSum() {

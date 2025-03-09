@@ -57,27 +57,24 @@ public class MonthlyCostsSummaryControllerIntegrationTest {
 
         MonthlyCosts costs = new MonthlyCosts(1300, 500, 300,
                 400, 100, 1000, 400);
-
         costs.setUser(user);
-
         monthlyCostsRepository.save(costs);
 
-        MonthlyCostsSummary summary = new MonthlyCostsSummary(1, 3500.0,BigDecimal.valueOf(26),
-                BigDecimal.valueOf(10),BigDecimal.valueOf(6),BigDecimal.valueOf(8),BigDecimal.valueOf(2),BigDecimal.valueOf(20),
-                BigDecimal.valueOf(8),BigDecimal.valueOf(70),BigDecimal.valueOf(1500));
-
+        MonthlyCostsSummary summary = new MonthlyCostsSummary(1, 3500.0, BigDecimal.valueOf(26),
+                BigDecimal.valueOf(10), BigDecimal.valueOf(6), BigDecimal.valueOf(8), BigDecimal.valueOf(2),
+                BigDecimal.valueOf(20), BigDecimal.valueOf(8), BigDecimal.valueOf(70), BigDecimal.valueOf(1500));
         summary.setMonthlyCosts(costs);
-
+        summary.setVersion(0);
         monthlyCostsSummaryRepository.save(summary);
 
         month = summary.getCreateDate().getMonth();
     }
 
     @Test
-    public void shouldRetrieveMonthlyCostsSummaryByUserIdAndMonth() throws Exception{
+    public void shouldRetrieveMonthlyCostsSummaryByUserIdAndMonth() throws Exception {
         mockMvc.perform(get("/budget-management/users/{userId}/monthly_costs/monthly_costs_summary", userId)
                         .param("month", String.valueOf(month.getValue()))
-                .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.size()").value(13))
                 .andExpect(jsonPath("$.monthlyCostsSum").value(3500.0))
