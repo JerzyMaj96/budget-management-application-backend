@@ -141,6 +141,9 @@ public class MonthlyCostsService {
             case "food" -> monthlyCostsSummary.setFoodCostsPercentageOfUserSalary(value);
             case "electricity" -> monthlyCostsSummary.setCurrentElectricityBillPercentageOfUserSalary(value);
             case "gas" -> monthlyCostsSummary.setCurrentGasBillPercentageOfUserSalary(value);
+            case "car_service" -> monthlyCostsSummary.setTotalCarServicePercentageOfUserSalary(value);
+            case "car_insurance" -> monthlyCostsSummary.setCarInsuranceCostsPercentageOfUserSalary(value);
+            case "car_operating" -> monthlyCostsSummary.setCarOperatingCostsPercentageOfUserSalary(value);
             case "net_salary" -> monthlyCostsSummary.setNetSalaryAfterCosts(value);
             case "total_costs" -> monthlyCostsSummary.setCostsPercentageOfUserSalary(value);
         }

@@ -13,8 +13,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.time.YearMonth;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
@@ -30,52 +30,55 @@ public class MonthlyCostsController {
     }
 
     @PostMapping
-    public ResponseEntity<MonthlyCostsDTO> createMonthlyCostsForUser(@PathVariable Long userId,
-                                                                     @Valid @RequestBody MonthlyCostsDTO monthlyCostsDTO) {
-        Optional<User> user = userService.getUserById(userId);
+    public ResponseEntity<MonthlyCostsDTO> createOrUpdateMonthlyCosts(@PathVariable Long userId,
+                                                                      @Valid @RequestBody MonthlyCostsDTO monthlyCostsDTO) {
+        User user = userService.getUserById(userId)
+                .orElseThrow(() -> new UserNotFoundException("User not found: " + userId));
 
-        if (user.isEmpty())
-            throw new UserNotFoundException("User not found: " + userId);
+        List<MonthlyCosts> costsFromDB = monthlyCostsService.getMonthlyCostsByUserId(user.getId());
 
-        List<MonthlyCosts> existingMonthlyCostsCheck = monthlyCostsService.getMonthlyCostsByUserId(userId);
+        YearMonth currentMonth = YearMonth.now();
+        MonthlyCosts existingMonthlyCosts = null;
 
-        for (MonthlyCosts monthlyCost : existingMonthlyCostsCheck)
-            if (monthlyCost.getCreateDate() != null && monthlyCostsDTO.getCreateDate() != null &&
-                    monthlyCost.getCreateDate().getMonth() == monthlyCostsDTO.getCreateDate().getMonth() &&
-                    monthlyCost.getCreateDate().getYear() == monthlyCostsDTO.getCreateDate().getYear())
-            {
-                monthlyCost.setRent(monthlyCostsDTO.getRent());
-                monthlyCost.setFoodCosts(monthlyCostsDTO.getFoodCosts());
-                monthlyCost.setCurrentElectricityBill(monthlyCostsDTO.getCurrentElectricityBill());
-                monthlyCost.setCurrentGasBill(monthlyCostsDTO.getCurrentGasBill());
-                monthlyCost.setTotalCarServiceCosts(monthlyCostsDTO.getTotalCarServiceCosts());
-                monthlyCost.setCarInsuranceCosts(monthlyCostsDTO.getCarInsuranceCosts());
-                monthlyCost.setCarOperatingCosts(monthlyCostsDTO.getCarOperatingCosts());
-
-
-                MonthlyCosts updatedCost = monthlyCostsService.createMonthlyCostsForUser(monthlyCost);
-                return ResponseEntity.ok(monthlyCostsService.convertMonthlyCostsToDTO(updatedCost));
+        for (MonthlyCosts cost : costsFromDB) {
+            if (cost.getCreateDate() != null &&
+                    YearMonth.from(cost.getCreateDate()).equals(currentMonth)) {
+                existingMonthlyCosts = cost;
+                break;
             }
+        }
+        if (existingMonthlyCosts != null) {
+            existingMonthlyCosts.setRent(monthlyCostsDTO.getRent());
+            existingMonthlyCosts.setFoodCosts(monthlyCostsDTO.getFoodCosts());
+            existingMonthlyCosts.setCurrentElectricityBill(monthlyCostsDTO.getCurrentElectricityBill());
+            existingMonthlyCosts.setCurrentGasBill(monthlyCostsDTO.getCurrentGasBill());
+            existingMonthlyCosts.setTotalCarServiceCosts(monthlyCostsDTO.getTotalCarServiceCosts());
+            existingMonthlyCosts.setCarInsuranceCosts(monthlyCostsDTO.getCarInsuranceCosts());
+            existingMonthlyCosts.setCarOperatingCosts(monthlyCostsDTO.getCarOperatingCosts());
 
-        MonthlyCosts monthlyCosts = new MonthlyCosts();
-        monthlyCosts.setUser(user.get());
-        monthlyCosts.setRent(monthlyCostsDTO.getRent());
-        monthlyCosts.setFoodCosts(monthlyCostsDTO.getFoodCosts());
-        monthlyCosts.setCurrentElectricityBill(monthlyCostsDTO.getCurrentElectricityBill());
-        monthlyCosts.setCurrentGasBill(monthlyCostsDTO.getCurrentGasBill());
-        monthlyCosts.setTotalCarServiceCosts(monthlyCostsDTO.getTotalCarServiceCosts());
-        monthlyCosts.setCarInsuranceCosts(monthlyCostsDTO.getCarInsuranceCosts());
-        monthlyCosts.setCarOperatingCosts(monthlyCostsDTO.getCarOperatingCosts());
+            MonthlyCosts updatedCosts = monthlyCostsService.createMonthlyCostsForUser(existingMonthlyCosts);
+            return ResponseEntity.ok(monthlyCostsService.convertMonthlyCostsToDTO(updatedCosts));
+        }
 
-        MonthlyCosts savedMonthlyCosts = monthlyCostsService.createMonthlyCostsForUser(monthlyCosts);
+        MonthlyCosts newCosts = new MonthlyCosts();
+        newCosts.setUser(user);
+        newCosts.setRent(monthlyCostsDTO.getRent());
+        newCosts.setFoodCosts(monthlyCostsDTO.getFoodCosts());
+        newCosts.setCurrentElectricityBill(monthlyCostsDTO.getCurrentElectricityBill());
+        newCosts.setCurrentGasBill(monthlyCostsDTO.getCurrentGasBill());
+        newCosts.setTotalCarServiceCosts(monthlyCostsDTO.getTotalCarServiceCosts());
+        newCosts.setCarInsuranceCosts(monthlyCostsDTO.getCarInsuranceCosts());
+        newCosts.setCarOperatingCosts(monthlyCostsDTO.getCarOperatingCosts());
 
-        URI location = ServletUriComponentsBuilder
-                .fromCurrentRequest()
+        MonthlyCosts savedCosts = monthlyCostsService.createMonthlyCostsForUser(newCosts);
+        MonthlyCostsDTO responseDTO = monthlyCostsService.convertMonthlyCostsToDTO(savedCosts);
+
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
-                .buildAndExpand(savedMonthlyCosts.getId())
+                .buildAndExpand(savedCosts.getId())
                 .toUri();
 
-        return ResponseEntity.created(location).body(monthlyCostsService.convertMonthlyCostsToDTO(savedMonthlyCosts));
+        return ResponseEntity.created(location).body(responseDTO);
     }
 
     @GetMapping("/byUserId")

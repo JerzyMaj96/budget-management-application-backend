@@ -132,6 +132,9 @@ public class MonthlyCostsServiceTest {
             "food, 15.0",
             "electricity, 5.75",
             "gas, 8.25",
+            "car_service, 12.0",
+            "car_insurance, 7.5",
+            "car_operating, 6.0",
             "net_salary, 2000.00",
             "total_costs, 50.00"})
     public void testUpdateMonthlyCostsSummary(String type, BigDecimal value){
@@ -151,6 +154,9 @@ public class MonthlyCostsServiceTest {
             case "food" -> assertEquals(value, mockMonthlyCostsSummary.getFoodCostsPercentageOfUserSalary());
             case "electricity" -> assertEquals(value, mockMonthlyCostsSummary.getCurrentElectricityBillPercentageOfUserSalary());
             case "gas" -> assertEquals(value, mockMonthlyCostsSummary.getCurrentGasBillPercentageOfUserSalary());
+            case "car_service" -> assertEquals(value, mockMonthlyCostsSummary.getTotalCarServicePercentageOfUserSalary());
+            case "car_insurance" -> assertEquals(value, mockMonthlyCostsSummary.getCarInsuranceCostsPercentageOfUserSalary());
+            case "car_operating" -> assertEquals(value, mockMonthlyCostsSummary.getCarOperatingCostsPercentageOfUserSalary());
             case "net_salary" -> assertEquals(value, mockMonthlyCostsSummary.getNetSalaryAfterCosts());
             case "total_costs" -> assertEquals(value, mockMonthlyCostsSummary.getCostsPercentageOfUserSalary());
             default -> fail("Unknown cost type: " + type);
