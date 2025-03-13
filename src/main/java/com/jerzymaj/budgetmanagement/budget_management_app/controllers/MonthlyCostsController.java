@@ -37,48 +37,14 @@ public class MonthlyCostsController {
 
         List<MonthlyCosts> costsFromDB = monthlyCostsService.getMonthlyCostsByUserId(user.getId());
 
-        YearMonth currentMonth = YearMonth.now();
-        MonthlyCosts existingMonthlyCosts = null;
-
-        for (MonthlyCosts cost : costsFromDB) {
-            if (cost.getCreateDate() != null &&
-                    YearMonth.from(cost.getCreateDate()).equals(currentMonth)) {
-                existingMonthlyCosts = cost;
-                break;
-            }
-        }
-        if (existingMonthlyCosts != null) {
-            existingMonthlyCosts.setRent(monthlyCostsDTO.getRent());
-            existingMonthlyCosts.setFoodCosts(monthlyCostsDTO.getFoodCosts());
-            existingMonthlyCosts.setCurrentElectricityBill(monthlyCostsDTO.getCurrentElectricityBill());
-            existingMonthlyCosts.setCurrentGasBill(monthlyCostsDTO.getCurrentGasBill());
-            existingMonthlyCosts.setTotalCarServiceCosts(monthlyCostsDTO.getTotalCarServiceCosts());
-            existingMonthlyCosts.setCarInsuranceCosts(monthlyCostsDTO.getCarInsuranceCosts());
-            existingMonthlyCosts.setCarOperatingCosts(monthlyCostsDTO.getCarOperatingCosts());
-
-            MonthlyCosts updatedCosts = monthlyCostsService.createMonthlyCostsForUser(existingMonthlyCosts);
-            return ResponseEntity.ok(monthlyCostsService.convertMonthlyCostsToDTO(updatedCosts));
-        }
-
-        MonthlyCosts newCosts = new MonthlyCosts();
-        newCosts.setUser(user);
-        newCosts.setRent(monthlyCostsDTO.getRent());
-        newCosts.setFoodCosts(monthlyCostsDTO.getFoodCosts());
-        newCosts.setCurrentElectricityBill(monthlyCostsDTO.getCurrentElectricityBill());
-        newCosts.setCurrentGasBill(monthlyCostsDTO.getCurrentGasBill());
-        newCosts.setTotalCarServiceCosts(monthlyCostsDTO.getTotalCarServiceCosts());
-        newCosts.setCarInsuranceCosts(monthlyCostsDTO.getCarInsuranceCosts());
-        newCosts.setCarOperatingCosts(monthlyCostsDTO.getCarOperatingCosts());
-
-        MonthlyCosts savedCosts = monthlyCostsService.createMonthlyCostsForUser(newCosts);
-        MonthlyCostsDTO responseDTO = monthlyCostsService.convertMonthlyCostsToDTO(savedCosts);
+        MonthlyCostsDTO responseMonthlyCostsDTO = monthlyCostsService.createOrUpdateMonthlyCosts(user, monthlyCostsDTO, costsFromDB);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
-                .buildAndExpand(savedCosts.getId())
+                .buildAndExpand(responseMonthlyCostsDTO.getId())
                 .toUri();
 
-        return ResponseEntity.created(location).body(responseDTO);
+        return ResponseEntity.created(location).body(responseMonthlyCostsDTO);
     }
 
     @GetMapping("/byUserId")

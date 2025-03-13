@@ -8,10 +8,12 @@ import com.jerzymaj.budgetmanagement.budget_management_app.exceptions.MonthlyCos
 import com.jerzymaj.budgetmanagement.budget_management_app.jpa_repositories.MonthlyCostsSummaryRepository;
 import com.jerzymaj.budgetmanagement.budget_management_app.models.MonthlyCosts;
 import com.jerzymaj.budgetmanagement.budget_management_app.models.MonthlyCostsSummary;
+import com.jerzymaj.budgetmanagement.budget_management_app.models.User;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.Month;
+import java.time.YearMonth;
 import java.util.List;
 import java.util.Optional;
 
@@ -130,6 +132,34 @@ public class MonthlyCostsService {
                 summary.getNetSalaryAfterCosts(),
                 summary.getFinancialAdvice(),
                 summary.getCreateDate());
+    }
+
+    public MonthlyCostsDTO createOrUpdateMonthlyCosts(User user, MonthlyCostsDTO monthlyCostsDTO, List<MonthlyCosts> costsFromDB) {
+        YearMonth currentYearMonth = YearMonth.now();
+        MonthlyCosts monthlyCosts = null;
+
+        for (MonthlyCosts cost : costsFromDB) {
+            if (cost.getCreateDate() != null && YearMonth.from(cost.getCreateDate()).equals(currentYearMonth)) {
+                monthlyCosts = cost;
+                break;
+            }
+        }
+
+        if (monthlyCosts == null) {
+            monthlyCosts = new MonthlyCosts();
+            monthlyCosts.setUser(user);
+        }
+
+        monthlyCosts.setRent(monthlyCostsDTO.getRent());
+        monthlyCosts.setFoodCosts(monthlyCostsDTO.getFoodCosts());
+        monthlyCosts.setCurrentElectricityBill(monthlyCostsDTO.getCurrentElectricityBill());
+        monthlyCosts.setCurrentGasBill(monthlyCostsDTO.getCurrentGasBill());
+        monthlyCosts.setTotalCarServiceCosts(monthlyCostsDTO.getTotalCarServiceCosts());
+        monthlyCosts.setCarInsuranceCosts(monthlyCostsDTO.getCarInsuranceCosts());
+        monthlyCosts.setCarOperatingCosts(monthlyCostsDTO.getCarOperatingCosts());
+
+        MonthlyCosts savedCosts = createMonthlyCostsForUser(monthlyCosts);
+        return convertMonthlyCostsToDTO(savedCosts);
     }
 
     public void updateMonthlyCostsSummary(Long userId, int month, BigDecimal value, String type) {

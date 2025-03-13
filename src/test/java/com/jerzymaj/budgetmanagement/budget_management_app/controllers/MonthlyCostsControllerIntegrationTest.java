@@ -41,7 +41,6 @@ public class MonthlyCostsControllerIntegrationTest {
 
     private Month creationMonth1;
 
-    private Month creationMonth2;
     @BeforeEach
     public void setUp(){
         userRepository.deleteAll();
@@ -64,7 +63,6 @@ public class MonthlyCostsControllerIntegrationTest {
         monthlyCostsRepository.saveAll(List.of(costs1,costs2));
 
         creationMonth1 = costs1.getCreateDate().getMonth();
-        creationMonth2 = costs2.getCreateDate().getMonth();
     }
 
     @Test
