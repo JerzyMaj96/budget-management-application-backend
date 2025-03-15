@@ -16,6 +16,10 @@ public class MonthlyCostsDTO {
     private Double carOperatingCosts;
     private LocalDateTime createDate;
 
+    public MonthlyCostsDTO() {
+
+    }
+
     public MonthlyCostsDTO(Long id, Double rent, Double foodCosts, Double currentElectricityBill,
                            Double currentGasBill, Double totalCarServiceCosts, Double carInsuranceCosts,
                            Double carOperatingCosts, LocalDateTime createDate) {

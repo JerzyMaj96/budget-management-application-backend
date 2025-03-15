@@ -6,6 +6,7 @@ import com.jerzymaj.budgetmanagement.budget_management_app.jpa_repositories.Mont
 import com.jerzymaj.budgetmanagement.budget_management_app.jpa_repositories.MonthlyCostsSummaryRepository;
 import com.jerzymaj.budgetmanagement.budget_management_app.models.MonthlyCosts;
 import com.jerzymaj.budgetmanagement.budget_management_app.models.MonthlyCostsSummary;
+import com.jerzymaj.budgetmanagement.budget_management_app.models.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,6 +19,9 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.YearMonth;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -33,6 +37,9 @@ public class MonthlyCostsServiceTest {
 
     @InjectMocks
     private MonthlyCostsService monthlyCostsService;
+
+    @Mock
+    private User user;
 
     private MonthlyCosts mockMonthlyCosts;
 
@@ -124,6 +131,79 @@ public class MonthlyCostsServiceTest {
 
         assertEquals(expectedMonthlyCostsSummaryDTO,actualResultDTO);
 
+    }
+
+    @Test
+    void testCreateOrUpdateMonthlyCosts_NewMonthlyCosts() {
+        MonthlyCostsDTO inputDTO = new MonthlyCostsDTO();
+        inputDTO.setRent(1000.0);
+        inputDTO.setFoodCosts(500.0);
+        inputDTO.setCurrentElectricityBill(100.0);
+        inputDTO.setCurrentGasBill(50.0);
+        inputDTO.setTotalCarServiceCosts(200.0);
+        inputDTO.setCarInsuranceCosts(150.0);
+        inputDTO.setCarOperatingCosts(300.0);
+
+        List<MonthlyCosts> costsFromDB = new ArrayList<>();
+
+        MonthlyCosts newMonthlyCosts = new MonthlyCosts();
+        newMonthlyCosts.setUser(user);
+        newMonthlyCosts.setRent(1000.0);
+        newMonthlyCosts.setFoodCosts(500.0);
+        newMonthlyCosts.setCurrentElectricityBill(100.0);
+        newMonthlyCosts.setCurrentGasBill(50.0);
+        newMonthlyCosts.setTotalCarServiceCosts(200.0);
+        newMonthlyCosts.setCarInsuranceCosts(150.0);
+        newMonthlyCosts.setCarOperatingCosts(300.0);
+
+        when(monthlyCostsRepository.save(any(MonthlyCosts.class))).thenReturn(newMonthlyCosts);
+
+        MonthlyCostsDTO actualDTO = monthlyCostsService.createOrUpdateMonthlyCosts(user, inputDTO, costsFromDB);
+
+        assertNotNull(actualDTO);
+        assertEquals(1000.0, actualDTO.getRent());
+        assertEquals(500.0, actualDTO.getFoodCosts());
+        assertEquals(100.0, actualDTO.getCurrentElectricityBill());
+        assertEquals(50.0, actualDTO.getCurrentGasBill());
+        assertEquals(200.0, actualDTO.getTotalCarServiceCosts());
+        assertEquals(150.0, actualDTO.getCarInsuranceCosts());
+        assertEquals(300.0, actualDTO.getCarOperatingCosts());
+
+        verify(monthlyCostsRepository, times(1)).save(any(MonthlyCosts.class));
+    }
+
+    @Test
+    void testCreateOrUpdateMonthlyCosts_UpdateExistingCosts() {
+        YearMonth currentYearMonth = YearMonth.now();
+
+        MonthlyCosts existingMonthlyCosts = mockMonthlyCosts;
+
+        List<MonthlyCosts> costsFromDB = new ArrayList<>();
+        costsFromDB.add(existingMonthlyCosts);
+
+        MonthlyCostsDTO inputDTO = new MonthlyCostsDTO();
+        inputDTO.setRent(1200.0);
+        inputDTO.setFoodCosts(500.0);
+        inputDTO.setCurrentElectricityBill(100.0);
+        inputDTO.setCurrentGasBill(50.0);
+        inputDTO.setTotalCarServiceCosts(200.0);
+        inputDTO.setCarInsuranceCosts(150.0);
+        inputDTO.setCarOperatingCosts(300.0);
+
+        when(monthlyCostsRepository.save(any(MonthlyCosts.class))).thenReturn(existingMonthlyCosts);
+
+        MonthlyCostsDTO actualDTO = monthlyCostsService.createOrUpdateMonthlyCosts(user, inputDTO, costsFromDB);
+
+        assertNotNull(actualDTO);
+        assertEquals(1200.0, actualDTO.getRent());
+        assertEquals(500.0, actualDTO.getFoodCosts());
+        assertEquals(100.0, actualDTO.getCurrentElectricityBill());
+        assertEquals(50.0, actualDTO.getCurrentGasBill());
+        assertEquals(200.0, actualDTO.getTotalCarServiceCosts());
+        assertEquals(150.0, actualDTO.getCarInsuranceCosts());
+        assertEquals(300.0, actualDTO.getCarOperatingCosts());
+
+        verify(monthlyCostsRepository, times(1)).save(existingMonthlyCosts);
     }
 
     @ParameterizedTest
