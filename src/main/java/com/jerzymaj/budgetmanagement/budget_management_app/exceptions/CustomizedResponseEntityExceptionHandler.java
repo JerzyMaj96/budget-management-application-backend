@@ -22,7 +22,7 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
     }
 
     @ExceptionHandler(UserNotFoundException.class)
-    public final ResponseEntity<ErrorDetails> handleUserNotFoundException(Exception ex, WebRequest request) throws Exception{
+    public final ResponseEntity<ErrorDetails> handleUserNotFoundException(Exception ex, WebRequest request) throws Exception {
 
         ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(),
                 request.getDescription(false));
@@ -32,7 +32,7 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
 
     @ExceptionHandler(MonthlyCostsNotFoundException.class)
     public final ResponseEntity<ErrorDetails> handleMonthlyCostsNotFoundException(Exception ex, WebRequest request)
-            throws Exception{
+            throws Exception {
 
         ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(),
                 request.getDescription(false));
@@ -42,7 +42,7 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
     }
 
     @ExceptionHandler(MonthlyCostsSummaryNotFoundException.class)
-    public final ResponseEntity<ErrorDetails> handleMonthlyCostsSummaryNotFoundException(Exception ex, WebRequest request){
+    public final ResponseEntity<ErrorDetails> handleMonthlyCostsSummaryNotFoundException(Exception ex, WebRequest request) {
 
         ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(),
                 request.getDescription(false));
@@ -51,7 +51,7 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
     }
 
     @ExceptionHandler(MonthlyCostsSumNotFoundException.class)
-    public final ResponseEntity<ErrorDetails> handleMonthlyCostsSumNotFoundException(Exception ex, WebRequest request){
+    public final ResponseEntity<ErrorDetails> handleMonthlyCostsSumNotFoundException(Exception ex, WebRequest request) {
 
         ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(),
                 request.getDescription(false));
@@ -60,11 +60,22 @@ public class CustomizedResponseEntityExceptionHandler extends ResponseEntityExce
     }
 
     @ExceptionHandler(NetSalaryAfterCostsNotFoundException.class)
-    public final ResponseEntity<ErrorDetails> handleNetSalaryAfterCostsNotFoundException(Exception ex, WebRequest request){
+    public final ResponseEntity<ErrorDetails> handleNetSalaryAfterCostsNotFoundException(Exception ex, WebRequest request) {
 
         ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(),
                 request.getDescription(false));
 
         return new ResponseEntity<ErrorDetails>(errorDetails, HttpStatus.NOT_FOUND);
     }
+
+
+    @ExceptionHandler(ExistingUserException.class)
+    public final ResponseEntity<ErrorDetails> handleExistingUserException(Exception ex, WebRequest request) {
+
+        ErrorDetails errorDetails = new ErrorDetails(LocalDateTime.now(), ex.getMessage(),
+                request.getDescription(false));
+
+        return new ResponseEntity<ErrorDetails>(errorDetails, HttpStatus.BAD_REQUEST);
+    }
+
 }

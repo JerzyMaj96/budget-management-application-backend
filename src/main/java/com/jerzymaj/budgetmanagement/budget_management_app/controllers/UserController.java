@@ -1,6 +1,7 @@
 package com.jerzymaj.budgetmanagement.budget_management_app.controllers;
 
 import com.jerzymaj.budgetmanagement.budget_management_app.DTOs.UserDTO;
+import com.jerzymaj.budgetmanagement.budget_management_app.exceptions.ExistingUserException;
 import com.jerzymaj.budgetmanagement.budget_management_app.exceptions.UserNotFoundException;
 import com.jerzymaj.budgetmanagement.budget_management_app.models.User;
 import com.jerzymaj.budgetmanagement.budget_management_app.services.UserService;
@@ -12,6 +13,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
@@ -55,8 +57,14 @@ public class UserController {
 
     @PostMapping
     public ResponseEntity<UserDTO> createUser(@Valid @RequestBody UserDTO userDTO) {
-        User user = new User(userDTO.getId(), userDTO.getName(), userDTO.getNetSalary());
-        User savedUser = userService.createUser(user);
+        for (User user : userService.getAllUsers()) {
+            if (Objects.equals(userDTO.getName(), user.getName())) {
+                throw new ExistingUserException("User with the name " + userDTO.getName() + " already exists.");
+            }
+        }
+
+        User newUser = new User(userDTO.getId(), userDTO.getName(), userDTO.getNetSalary());
+        User savedUser = userService.createUser(newUser);
 
         URI location = ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -64,9 +72,10 @@ public class UserController {
                 .buildAndExpand(savedUser.getId())
                 .toUri();
 
-        UserDTO savedUserDTO = new UserDTO(savedUser.getId(), savedUser.getName(), savedUser.getNetSalary());
+        UserDTO savedUserDTO = userService.convertUserToDTO(savedUser);
 
         return ResponseEntity.created(location).body(savedUserDTO);
     }
+
 
 }

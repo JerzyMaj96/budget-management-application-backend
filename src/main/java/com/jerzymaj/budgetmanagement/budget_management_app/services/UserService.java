@@ -1,5 +1,6 @@
 package com.jerzymaj.budgetmanagement.budget_management_app.services;
 
+import com.jerzymaj.budgetmanagement.budget_management_app.DTOs.UserDTO;
 import com.jerzymaj.budgetmanagement.budget_management_app.exceptions.MonthlyCostsNotFoundException;
 import com.jerzymaj.budgetmanagement.budget_management_app.exceptions.MonthlyCostsSumNotFoundException;
 import com.jerzymaj.budgetmanagement.budget_management_app.exceptions.MonthlyCostsSummaryNotFoundException;
@@ -42,6 +43,13 @@ public class UserService {
 
     public void deleteUser(Long id) {
         userRepository.deleteById(id);
+    }
+
+    public UserDTO convertUserToDTO(User user){
+        return new UserDTO(user.getId(),
+                           user.getName(),
+                           user.getNetSalary()
+        );
     }
 
     public BigDecimal calculateRentCostPercentageOfUserSalaryForMonthlyCosts(Long userId, int month) {
