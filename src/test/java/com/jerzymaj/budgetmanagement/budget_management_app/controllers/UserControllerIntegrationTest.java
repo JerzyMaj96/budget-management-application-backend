@@ -1,9 +1,12 @@
 package com.jerzymaj.budgetmanagement.budget_management_app.controllers;
 
+import com.jerzymaj.budgetmanagement.budget_management_app.jpa_repositories.MonthlyCostsRepository;
+import com.jerzymaj.budgetmanagement.budget_management_app.jpa_repositories.MonthlyCostsSummaryRepository;
 import com.jerzymaj.budgetmanagement.budget_management_app.jpa_repositories.UserRepository;
 import com.jerzymaj.budgetmanagement.budget_management_app.models.User;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,8 +34,9 @@ public class UserControllerIntegrationTest {
     @Autowired
     private UserRepository userRepository;
 
-    @BeforeAll
+    @BeforeEach
     void setUp() {
+
         userRepository.deleteAll();
 
         List<User> testUsers = List.of(
