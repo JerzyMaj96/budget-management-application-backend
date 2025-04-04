@@ -162,11 +162,11 @@ public class MonthlyCostsService {
         return convertMonthlyCostsToDTO(savedCosts);
     }
 
-    public void updateMonthlyCostsSummary(Long userId, int month, BigDecimal value, String type) {
+    public void updateMonthlyCostsSummary(Long userId, int month, BigDecimal value, String costType) {
         MonthlyCosts monthlyCosts = getMonthlyCostsForUserByMonth(userId, month);
         MonthlyCostsSummary monthlyCostsSummary = getOrCreateMonthlyCostsSummary(monthlyCosts);
 
-        switch (type) {
+        switch (costType) {
             case "rent" -> monthlyCostsSummary.setRentPercentageOfUserSalary(value);
             case "food" -> monthlyCostsSummary.setFoodCostsPercentageOfUserSalary(value);
             case "electricity" -> monthlyCostsSummary.setCurrentElectricityBillPercentageOfUserSalary(value);
