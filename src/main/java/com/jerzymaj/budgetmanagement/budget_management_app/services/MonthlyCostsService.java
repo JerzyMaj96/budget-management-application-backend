@@ -111,9 +111,9 @@ public class MonthlyCostsService {
                 monthlyCosts.getFoodCosts(),
                 monthlyCosts.getCurrentElectricityBill(),
                 monthlyCosts.getCurrentGasBill(),
-                monthlyCosts.getTotalCarServiceCosts(),
-                monthlyCosts.getCarInsuranceCosts(),
-                monthlyCosts.getCarOperatingCosts(),
+                monthlyCosts.getTotalCarServiceCosts() != null ? monthlyCosts.getTotalCarServiceCosts() : 0.0,
+                monthlyCosts.getCarInsuranceCosts() != null ? monthlyCosts.getCarInsuranceCosts() : 0.0,
+                monthlyCosts.getCarOperatingCosts() != null ? monthlyCosts.getCarOperatingCosts() : 0.0,
                 monthlyCosts.getCreateDate()
         );
     }

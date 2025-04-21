@@ -36,15 +36,12 @@ public class MonthlyCosts {
     private double currentGasBill;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    @Positive
     private Double totalCarServiceCosts;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    @Positive
     private Double carInsuranceCosts;
 
     @JsonInclude(JsonInclude.Include.NON_NULL)
-    @Positive
     private Double carOperatingCosts;
 
     @ManyToOne(fetch = FetchType.LAZY)
