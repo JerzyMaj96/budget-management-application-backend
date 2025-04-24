@@ -18,8 +18,10 @@ public class MonthlyCostsSummaryDTO {
     private BigDecimal carOperatingCostsPercentageOfUserSalary;
     private BigDecimal costsPercentageOfUserSalary;
     private BigDecimal netSalaryAfterCosts;
-    private String financialAdvice;
+//    private String financialAdvice;
     private LocalDateTime createDate;
+
+    public MonthlyCostsSummaryDTO() {}
 
     public MonthlyCostsSummaryDTO(int id, Double monthlyCostsSum, BigDecimal rentPercentageOfUserSalary,
                                   BigDecimal foodCostsPercentageOfUserSalary,
@@ -29,7 +31,8 @@ public class MonthlyCostsSummaryDTO {
                                   BigDecimal carInsuranceCostsPercentageOfUserSalary,
                                   BigDecimal carOperatingCostsPercentageOfUserSalary,
                                   BigDecimal costsPercentageOfUserSalary,
-                                  BigDecimal netSalaryAfterCosts, String financialAdvice,
+                                  BigDecimal netSalaryAfterCosts,
+//                                  String financialAdvice,
                                   LocalDateTime createDate) {
         this.id = id;
         this.monthlyCostsSum = monthlyCostsSum;
@@ -42,7 +45,7 @@ public class MonthlyCostsSummaryDTO {
         this.carOperatingCostsPercentageOfUserSalary = carOperatingCostsPercentageOfUserSalary;
         this.costsPercentageOfUserSalary = costsPercentageOfUserSalary;
         this.netSalaryAfterCosts = netSalaryAfterCosts;
-        this.financialAdvice = financialAdvice;
+//        this.financialAdvice = financialAdvice;
         this.createDate = createDate;
     }
 
@@ -135,13 +138,13 @@ public class MonthlyCostsSummaryDTO {
         this.netSalaryAfterCosts = netSalaryAfterCosts;
     }
 
-    public String getFinancialAdvice() {
-        return financialAdvice;
-    }
-
-    public void setFinancialAdvice(String financialAdvice) {
-        this.financialAdvice = financialAdvice;
-    }
+//    public String getFinancialAdvice() {
+//        return financialAdvice;
+//    }
+//
+//    public void setFinancialAdvice(String financialAdvice) {
+//        this.financialAdvice = financialAdvice;
+//    }
 
     public LocalDateTime getCreateDate() {
         return createDate;

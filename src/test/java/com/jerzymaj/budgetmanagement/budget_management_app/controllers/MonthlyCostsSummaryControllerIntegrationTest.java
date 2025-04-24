@@ -64,7 +64,6 @@ public class MonthlyCostsSummaryControllerIntegrationTest {
                 BigDecimal.valueOf(10), BigDecimal.valueOf(6), BigDecimal.valueOf(8), BigDecimal.valueOf(2),
                 BigDecimal.valueOf(20), BigDecimal.valueOf(8), BigDecimal.valueOf(70), BigDecimal.valueOf(1500));
         summary.setMonthlyCosts(costs);
-        summary.setVersion(0);
         monthlyCostsSummaryRepository.save(summary);
 
         month = summary.getCreateDate().getMonth();

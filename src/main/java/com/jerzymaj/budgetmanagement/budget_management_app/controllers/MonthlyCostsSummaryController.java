@@ -1,6 +1,7 @@
 package com.jerzymaj.budgetmanagement.budget_management_app.controllers;
 
 import com.jerzymaj.budgetmanagement.budget_management_app.DTOs.MonthlyCostsSummaryDTO;
+import com.jerzymaj.budgetmanagement.budget_management_app.DTOs.MonthlyCostsSummaryWithAdviceDTO;
 import com.jerzymaj.budgetmanagement.budget_management_app.exceptions.MonthlyCostsSummaryNotFoundException;
 import com.jerzymaj.budgetmanagement.budget_management_app.exceptions.NetSalaryAfterCostsNotFoundException;
 import com.jerzymaj.budgetmanagement.budget_management_app.models.MonthlyCosts;
@@ -95,7 +96,7 @@ public class MonthlyCostsSummaryController {
     }
 
     @GetMapping("/monthly_costs_summary")
-    public ResponseEntity<MonthlyCostsSummaryDTO> retrieveMonthlyCostsSummaryByUserIdAndMonth(@PathVariable Long userId, @RequestParam int month) {
+    public ResponseEntity<MonthlyCostsSummaryDTO> retrieveMonthlyCostsSummaryByUserIdAndMonthWithoutAdvice(@PathVariable Long userId, @RequestParam int month) {
 
         MonthlyCostsSummary monthlyCostsSummary = monthlyCostsService
                 .getMonthlyCostsSummaryForUserByMonth(userId,month)
@@ -104,8 +105,20 @@ public class MonthlyCostsSummaryController {
         return ResponseEntity.ok(monthlyCostsService.convertMonthlyCostsSummaryToDTO(monthlyCostsSummary));
     }
 
+    @GetMapping("/monthly_costs_summary/advice")
+    public ResponseEntity<MonthlyCostsSummaryWithAdviceDTO> retrieveMonthlyCostsSummaryByUserIdAndMonthWithAdvice(@PathVariable Long userId, @RequestParam int month) {
+        MonthlyCostsSummary monthlyCostsSummary = monthlyCostsService
+                .getMonthlyCostsSummaryForUserByMonth(userId,month)
+                .orElseThrow(() -> new MonthlyCostsSummaryNotFoundException("No summary found for user " + userId));
+
+        return ResponseEntity.ok(monthlyCostsService.convertMonthlyCostsSummaryToDTOWithAdvice(monthlyCostsSummary));
+    }
+
+
     @PostMapping("/net_salary_after_costs")
     public ResponseEntity<BigDecimal> createNetSalaryAfterCostsForUserByMonth(@PathVariable Long userId, @RequestParam int month) {
+        System.out.println("📥 Otrzymano request na /net_salary_after_costs! userId=" + userId + ", month=" + month);
+
         BigDecimal netSalaryAfterCosts = userService.calculateNetSalaryAfterCostsForUser(userId, month);
         monthlyCostsService.updateMonthlyCostsSummary(userId, month, netSalaryAfterCosts, "net_salary");
         return ResponseEntity.ok(netSalaryAfterCosts);

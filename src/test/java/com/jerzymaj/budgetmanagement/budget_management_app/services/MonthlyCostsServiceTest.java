@@ -119,7 +119,7 @@ public class MonthlyCostsServiceTest {
                 mockMonthlyCostsSummary.getCarOperatingCostsPercentageOfUserSalary(),
                 mockMonthlyCostsSummary.getCostsPercentageOfUserSalary(),
                 mockMonthlyCostsSummary.getNetSalaryAfterCosts(),
-                mockMonthlyCostsSummary.getFinancialAdvice(),
+//                mockMonthlyCostsSummary.getFinancialAdvice(),
                 mockMonthlyCostsSummary.getCreateDate()
         );
 

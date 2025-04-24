@@ -2,6 +2,7 @@ package com.jerzymaj.budgetmanagement.budget_management_app.services;
 
 import com.jerzymaj.budgetmanagement.budget_management_app.DTOs.MonthlyCostsDTO;
 import com.jerzymaj.budgetmanagement.budget_management_app.DTOs.MonthlyCostsSummaryDTO;
+import com.jerzymaj.budgetmanagement.budget_management_app.DTOs.MonthlyCostsSummaryWithAdviceDTO;
 import com.jerzymaj.budgetmanagement.budget_management_app.exceptions.MonthlyCostsSummaryNotFoundException;
 import com.jerzymaj.budgetmanagement.budget_management_app.jpa_repositories.MonthlyCostsRepository;
 import com.jerzymaj.budgetmanagement.budget_management_app.exceptions.MonthlyCostsNotFoundException;
@@ -9,6 +10,7 @@ import com.jerzymaj.budgetmanagement.budget_management_app.jpa_repositories.Mont
 import com.jerzymaj.budgetmanagement.budget_management_app.models.MonthlyCosts;
 import com.jerzymaj.budgetmanagement.budget_management_app.models.MonthlyCostsSummary;
 import com.jerzymaj.budgetmanagement.budget_management_app.models.User;
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -130,8 +132,16 @@ public class MonthlyCostsService {
                 summary.getCarOperatingCostsPercentageOfUserSalary(),
                 summary.getCostsPercentageOfUserSalary(),
                 summary.getNetSalaryAfterCosts(),
-                summary.getFinancialAdvice(),
                 summary.getCreateDate());
+    }
+
+    public MonthlyCostsSummaryWithAdviceDTO convertMonthlyCostsSummaryToDTOWithAdvice(MonthlyCostsSummary summary) {
+        MonthlyCostsSummaryWithAdviceDTO dto = new MonthlyCostsSummaryWithAdviceDTO();
+        // ustaw wszystko z base DTO
+        MonthlyCostsSummaryDTO base = convertMonthlyCostsSummaryToDTO(summary);
+        BeanUtils.copyProperties(base, dto);
+        dto.setFinancialAdvice(summary.getFinancialAdvice());
+        return dto;
     }
 
     public MonthlyCostsDTO createOrUpdateMonthlyCosts(User user, MonthlyCostsDTO monthlyCostsDTO, List<MonthlyCosts> costsFromDB) {
