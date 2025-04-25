@@ -117,7 +117,6 @@ public class MonthlyCostsSummaryController {
 
     @PostMapping("/net_salary_after_costs")
     public ResponseEntity<BigDecimal> createNetSalaryAfterCostsForUserByMonth(@PathVariable Long userId, @RequestParam int month) {
-        System.out.println("📥 Otrzymano request na /net_salary_after_costs! userId=" + userId + ", month=" + month);
 
         BigDecimal netSalaryAfterCosts = userService.calculateNetSalaryAfterCostsForUser(userId, month);
         monthlyCostsService.updateMonthlyCostsSummary(userId, month, netSalaryAfterCosts, "net_salary");
