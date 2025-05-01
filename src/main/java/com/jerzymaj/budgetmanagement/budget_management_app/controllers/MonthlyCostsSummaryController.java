@@ -9,8 +9,11 @@ import com.jerzymaj.budgetmanagement.budget_management_app.models.MonthlyCostsSu
 import com.jerzymaj.budgetmanagement.budget_management_app.services.GPTService;
 import com.jerzymaj.budgetmanagement.budget_management_app.services.MonthlyCostsService;
 import com.jerzymaj.budgetmanagement.budget_management_app.services.UserService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 
@@ -126,7 +129,9 @@ public class MonthlyCostsSummaryController {
     @PostMapping("/advice")
     public ResponseEntity<String> getOrCreateFinancialAdvice(@PathVariable Long userId, @RequestParam int month) {
 
-        MonthlyCostsSummary monthlyCostsSummary = monthlyCostsService.getMonthlyCostsSummaryForUserByMonth(userId, month)
+
+        MonthlyCostsSummary monthlyCostsSummary = monthlyCostsService
+                .getMonthlyCostsSummaryForUserByMonth(userId, month)
                 .orElseThrow(() -> new MonthlyCostsSummaryNotFoundException("No summary found for user " + userId));
 
         BigDecimal netSalaryAfterCostsNow = userService.calculateNetSalaryAfterCostsForUser(userId, month);
@@ -136,7 +141,8 @@ public class MonthlyCostsSummaryController {
             throw new NetSalaryAfterCostsNotFoundException("No net salary after costs found for user: " + userId);
         }
 
-        if (monthlyCostsSummary.getFinancialAdvice() != null && netSalaryAfterCostsNow.compareTo(netSalaryAfterCostsPrevious) == 0) {
+        if (monthlyCostsSummary.getFinancialAdvice() != null &&
+                netSalaryAfterCostsNow.compareTo(netSalaryAfterCostsPrevious) == 0) {
             return ResponseEntity.ok(monthlyCostsSummary.getFinancialAdvice());
         }
 
