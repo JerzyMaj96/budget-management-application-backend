@@ -30,4 +30,13 @@ cd budget-management-application
 mvn spring-boot:run
 
 ```
+By default, the frontend will be available at:
+http://localhost:5173
+
+Configuration
+
+Create a .env file in the project root and set the API URL:
+
+VITE_API_URL=http://localhost:8080
+This should point to your backend's base URL.
 
