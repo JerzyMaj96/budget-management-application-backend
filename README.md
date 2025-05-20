@@ -36,8 +36,8 @@ http://localhost:8080
 
 ## Configuration
 Make sure you configure your database connection in application.properties: 
-spring.datasource.url=jdbc:mysql://localhost:3306/your_db
-spring.datasource.username=your_username
-spring.datasource.password=your_password
+- spring.datasource.url=jdbc:mysql://localhost:3306/your_db
+- spring.datasource.username=your_username
+- spring.datasource.password=your_password
 
 
