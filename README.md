@@ -15,7 +15,7 @@ REST API for personal budget management. Backend based on Spring Boot.
 
 - Java 17+
 - Maven
-- (Opcjonalnie: IntelliJ IDEA)
+- IntelliJ IDEA or other programming environment
 
 ## Run
 
@@ -26,5 +26,18 @@ cd budget-management-application
 
 # 2. Run application
 ./mvnw spring-boot:run
-# or if you don't have Mavena:
+# or if you don't have the Maven wrapper:
 mvn spring-boot:run
+
+```
+
+By default, the backend will be available at:
+http://localhost:8080
+
+## Configuration
+Make sure you configure your database connection in application.properties: 
+spring.datasource.url=jdbc:mysql://localhost:3306/your_db
+spring.datasource.username=your_username
+spring.datasource.password=your_password
+
+
