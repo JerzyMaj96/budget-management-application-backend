@@ -1,7 +1,5 @@
 package com.jerzymaj.budgetmanagement.budget_management_app.DTOs;
 
-import com.jerzymaj.budgetmanagement.budget_management_app.models.MonthlyCostsSummary;
-
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
@@ -18,7 +16,6 @@ public class MonthlyCostsSummaryDTO {
     private BigDecimal carOperatingCostsPercentageOfUserSalary;
     private BigDecimal costsPercentageOfUserSalary;
     private BigDecimal netSalaryAfterCosts;
-//    private String financialAdvice;
     private LocalDateTime createDate;
 
     public MonthlyCostsSummaryDTO() {}
@@ -32,7 +29,6 @@ public class MonthlyCostsSummaryDTO {
                                   BigDecimal carOperatingCostsPercentageOfUserSalary,
                                   BigDecimal costsPercentageOfUserSalary,
                                   BigDecimal netSalaryAfterCosts,
-//                                  String financialAdvice,
                                   LocalDateTime createDate) {
         this.id = id;
         this.monthlyCostsSum = monthlyCostsSum;
@@ -45,7 +41,6 @@ public class MonthlyCostsSummaryDTO {
         this.carOperatingCostsPercentageOfUserSalary = carOperatingCostsPercentageOfUserSalary;
         this.costsPercentageOfUserSalary = costsPercentageOfUserSalary;
         this.netSalaryAfterCosts = netSalaryAfterCosts;
-//        this.financialAdvice = financialAdvice;
         this.createDate = createDate;
     }
 
@@ -137,14 +132,6 @@ public class MonthlyCostsSummaryDTO {
     public void setNetSalaryAfterCosts(BigDecimal netSalaryAfterCosts) {
         this.netSalaryAfterCosts = netSalaryAfterCosts;
     }
-
-//    public String getFinancialAdvice() {
-//        return financialAdvice;
-//    }
-//
-//    public void setFinancialAdvice(String financialAdvice) {
-//        this.financialAdvice = financialAdvice;
-//    }
 
     public LocalDateTime getCreateDate() {
         return createDate;
