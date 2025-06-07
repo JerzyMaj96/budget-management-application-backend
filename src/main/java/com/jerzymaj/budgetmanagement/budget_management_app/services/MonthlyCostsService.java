@@ -137,7 +137,6 @@ public class MonthlyCostsService {
 
     public MonthlyCostsSummaryWithAdviceDTO convertMonthlyCostsSummaryToDTOWithAdvice(MonthlyCostsSummary summary) {
         MonthlyCostsSummaryWithAdviceDTO dto = new MonthlyCostsSummaryWithAdviceDTO();
-        // ustaw wszystko z base DTO
         MonthlyCostsSummaryDTO base = convertMonthlyCostsSummaryToDTO(summary);
         BeanUtils.copyProperties(base, dto);
         dto.setFinancialAdvice(summary.getFinancialAdvice());
