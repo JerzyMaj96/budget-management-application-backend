@@ -60,11 +60,13 @@ public class MonthlyCostsSummaryControllerIntegrationTest {
         costs.setUser(user);
         monthlyCostsRepository.save(costs);
 
-        MonthlyCostsSummary summary = new MonthlyCostsSummary(1, 3500.0, BigDecimal.valueOf(26),
+        MonthlyCostsSummary summary = new MonthlyCostsSummary(3500.0, BigDecimal.valueOf(26),
                 BigDecimal.valueOf(10), BigDecimal.valueOf(6), BigDecimal.valueOf(8), BigDecimal.valueOf(2),
                 BigDecimal.valueOf(20), BigDecimal.valueOf(8), BigDecimal.valueOf(70), BigDecimal.valueOf(1500));
+
         summary.setMonthlyCosts(costs);
-        monthlyCostsSummaryRepository.save(summary);
+        summary = monthlyCostsSummaryRepository.saveAndFlush(summary);
+        summary = monthlyCostsSummaryRepository.findById(summary.getId()).get();
 
         month = summary.getCreateDate().getMonth();
     }
@@ -75,7 +77,7 @@ public class MonthlyCostsSummaryControllerIntegrationTest {
                         .param("month", String.valueOf(month.getValue()))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.size()").value(13))
+                .andExpect(jsonPath("$.size()").value(12))
                 .andExpect(jsonPath("$.monthlyCostsSum").value(3500.0))
                 .andExpect(jsonPath("$.rentPercentageOfUserSalary").value(26))
                 .andExpect(jsonPath("$.foodCostsPercentageOfUserSalary").value(10))

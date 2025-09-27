@@ -11,7 +11,7 @@ import org.springframework.http.HttpHeaders;
 public class GPTService {
 
     private static final String API_URL = "https://api.openai.com/v1/chat/completions";
-    private static final String API_KEY = "my API KEY";
+    private static final String API_KEY = "MY API KEY";
 
     public static String getAdviceFromGPT(String userPrompt){
 

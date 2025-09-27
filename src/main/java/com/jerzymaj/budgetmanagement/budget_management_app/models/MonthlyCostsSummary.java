@@ -59,7 +59,7 @@ public class MonthlyCostsSummary {
 
     public MonthlyCostsSummary(){}
 
-    public MonthlyCostsSummary(int id, Double monthlyCostsSum, BigDecimal rentPercentageOfUserSalary,
+    public MonthlyCostsSummary( Double monthlyCostsSum, BigDecimal rentPercentageOfUserSalary,
                                BigDecimal foodCostsPercentageOfUserSalary,
                                BigDecimal currentElectricityBillPercentageOfUserSalary, BigDecimal currentGasBillPercentageOfUserSalary,
                                BigDecimal totalCarServicePercentageOfUserSalary, BigDecimal carInsuranceCostsPercentageOfUserSalary,
