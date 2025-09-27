@@ -1,5 +1,6 @@
 package com.jerzymaj.budgetmanagement.budget_management_app.services;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -11,11 +12,16 @@ import org.springframework.http.HttpHeaders;
 public class GPTService {
 
     private static final String API_URL = "https://api.openai.com/v1/chat/completions";
-    private static final String API_KEY = "MY API KEY";
 
-    public static String getAdviceFromGPT(String userPrompt){
+    private final String gptApiKey;
+    private final RestTemplate restTemplate;
 
-        RestTemplate restTemplate = new RestTemplate();
+    public GPTService(@Value("${openai.api.key}") String gptApiKey, RestTemplate restTemplate){
+        this.gptApiKey = gptApiKey;
+        this.restTemplate = restTemplate;
+    }
+
+    public String getAdviceFromGPT(String userPrompt){
 
         String requestBody = "{"
                 + "\"model\": \"gpt-4o-mini-2024-07-18\","
@@ -25,7 +31,7 @@ public class GPTService {
 
         HttpHeaders headers = new HttpHeaders();
 
-        headers.set("Authorization", "Bearer " + API_KEY);
+        headers.set("Authorization", "Bearer " + gptApiKey);
         headers.set("Content-Type", "application/json");
 
         HttpEntity<String> requestEntity = new HttpEntity<>(requestBody,headers);

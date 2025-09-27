@@ -20,10 +20,12 @@ public class MonthlyCostsSummaryController {
 
     private final UserService userService;
     private final MonthlyCostsService monthlyCostsService;
+    private final GPTService gptService;
 
-    public MonthlyCostsSummaryController(UserService userService, MonthlyCostsService monthlyCostsService) {
+    public MonthlyCostsSummaryController(UserService userService, MonthlyCostsService monthlyCostsService, GPTService gptService) {
         this.userService = userService;
         this.monthlyCostsService = monthlyCostsService;
+        this.gptService = gptService;
     }
 
     @PostMapping("/sum")
@@ -144,7 +146,7 @@ public class MonthlyCostsSummaryController {
         }
 
         String prompt = userService.generatePromptBasedOnSalary(netSalaryAfterCostsNow);
-        String financialAdvice = GPTService.getAdviceFromGPT(prompt);
+        String financialAdvice = gptService.getAdviceFromGPT(prompt);
 
         monthlyCostsSummary.setFinancialAdvice(financialAdvice);
         monthlyCostsService.createMonthlyCostsSummaryForUser(monthlyCostsSummary);
