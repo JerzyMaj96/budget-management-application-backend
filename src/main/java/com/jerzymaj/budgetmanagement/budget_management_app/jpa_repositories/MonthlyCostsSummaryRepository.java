@@ -8,5 +8,5 @@ import java.util.Optional;
 
 public interface MonthlyCostsSummaryRepository extends JpaRepository<MonthlyCostsSummary, Integer> {
 
-       Optional<MonthlyCostsSummary> findByMonthlyCostsId(Long monthlyCostsId);
+    Optional<MonthlyCostsSummary> findByMonthlyCostsId(Long monthlyCostsId);
 }

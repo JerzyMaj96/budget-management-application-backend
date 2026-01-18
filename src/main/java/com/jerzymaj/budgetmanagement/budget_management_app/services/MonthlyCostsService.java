@@ -43,15 +43,17 @@ public class MonthlyCostsService {
         return monthlyCostsRepository.findById(monthlyCostsId);
     }
 
-    public Optional<MonthlyCostsSummary> getMonthlyCostsSummaryByMonthlyCostsId(Long monthlyCostsId){
+    public Optional<MonthlyCostsSummary> getMonthlyCostsSummaryByMonthlyCostsId(Long monthlyCostsId) {
         return monthlyCostsSummaryRepository.findByMonthlyCostsId(monthlyCostsId);
     }
 
-    public MonthlyCostsSummary createMonthlyCostsSummaryForUser(MonthlyCostsSummary monthlyCostsSummary){
+    public MonthlyCostsSummary createMonthlyCostsSummaryForUser(MonthlyCostsSummary monthlyCostsSummary) {
         return monthlyCostsSummaryRepository.save(monthlyCostsSummary);
-    };
+    }
 
-    public MonthlyCostsSummary getOrCreateMonthlyCostsSummary(MonthlyCosts monthlyCosts){
+    ;
+
+    public MonthlyCostsSummary getOrCreateMonthlyCostsSummary(MonthlyCosts monthlyCosts) {
 
         MonthlyCostsSummary summaryFromDB = getMonthlyCostsSummaryByMonthlyCostsId(monthlyCosts.getId())
                 .orElse(null);
@@ -77,7 +79,7 @@ public class MonthlyCostsService {
         throw new MonthlyCostsNotFoundException("No monthly costs found for month " + Month.of(month).name().toLowerCase());
     }
 
-    public double addUpAllMonthlyCostsForUser(Long userId, int month ) {
+    public double addUpAllMonthlyCostsForUser(Long userId, int month) {
         MonthlyCosts monthlyCosts = getMonthlyCostsForUserByMonth(userId, month);
 
         double rent = monthlyCosts.getRent();

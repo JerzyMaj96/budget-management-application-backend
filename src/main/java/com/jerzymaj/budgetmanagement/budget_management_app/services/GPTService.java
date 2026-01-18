@@ -16,12 +16,12 @@ public class GPTService {
     private final String gptApiKey;
     private final RestTemplate restTemplate;
 
-    public GPTService(@Value("${openai.api.key}") String gptApiKey, RestTemplate restTemplate){
+    public GPTService(@Value("${openai.api.key}") String gptApiKey, RestTemplate restTemplate) {
         this.gptApiKey = gptApiKey;
         this.restTemplate = restTemplate;
     }
 
-    public String getAdviceFromGPT(String userPrompt){
+    public String getAdviceFromGPT(String userPrompt) {
 
         String requestBody = "{"
                 + "\"model\": \"gpt-4o-mini-2024-07-18\","
@@ -34,7 +34,7 @@ public class GPTService {
         headers.set("Authorization", "Bearer " + gptApiKey);
         headers.set("Content-Type", "application/json");
 
-        HttpEntity<String> requestEntity = new HttpEntity<>(requestBody,headers);
+        HttpEntity<String> requestEntity = new HttpEntity<>(requestBody, headers);
         ResponseEntity<String> response = restTemplate.exchange(API_URL, HttpMethod.POST, requestEntity, String.class);
 
         return response.getBody();

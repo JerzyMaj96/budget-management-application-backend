@@ -101,7 +101,7 @@ public class MonthlyCostsSummaryController {
     public ResponseEntity<MonthlyCostsSummaryDTO> retrieveMonthlyCostsSummaryByUserIdAndMonthWithoutAdvice(@PathVariable Long userId, @RequestParam int month) {
 
         MonthlyCostsSummary monthlyCostsSummary = monthlyCostsService
-                .getMonthlyCostsSummaryForUserByMonth(userId,month)
+                .getMonthlyCostsSummaryForUserByMonth(userId, month)
                 .orElseThrow(() -> new MonthlyCostsSummaryNotFoundException("No summary found for user " + userId));
 
         return ResponseEntity.ok(monthlyCostsService.convertMonthlyCostsSummaryToDTO(monthlyCostsSummary));
@@ -110,7 +110,7 @@ public class MonthlyCostsSummaryController {
     @GetMapping("/monthly_costs_summary/advice")
     public ResponseEntity<MonthlyCostsSummaryWithAdviceDTO> retrieveMonthlyCostsSummaryByUserIdAndMonthWithAdvice(@PathVariable Long userId, @RequestParam int month) {
         MonthlyCostsSummary monthlyCostsSummary = monthlyCostsService
-                .getMonthlyCostsSummaryForUserByMonth(userId,month)
+                .getMonthlyCostsSummaryForUserByMonth(userId, month)
                 .orElseThrow(() -> new MonthlyCostsSummaryNotFoundException("No summary found for user " + userId));
 
         return ResponseEntity.ok(monthlyCostsService.convertMonthlyCostsSummaryToDTOWithAdvice(monthlyCostsSummary));

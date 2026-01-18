@@ -57,15 +57,16 @@ public class MonthlyCostsSummary {
     @UpdateTimestamp
     private LocalDateTime lastModifiedDate;
 
-    public MonthlyCostsSummary(){}
+    public MonthlyCostsSummary() {
+    }
 
-    public MonthlyCostsSummary( Double monthlyCostsSum, BigDecimal rentPercentageOfUserSalary,
+    public MonthlyCostsSummary(Double monthlyCostsSum, BigDecimal rentPercentageOfUserSalary,
                                BigDecimal foodCostsPercentageOfUserSalary,
                                BigDecimal currentElectricityBillPercentageOfUserSalary, BigDecimal currentGasBillPercentageOfUserSalary,
                                BigDecimal totalCarServicePercentageOfUserSalary, BigDecimal carInsuranceCostsPercentageOfUserSalary,
                                BigDecimal carOperatingCostsPercentageOfUserSalary, BigDecimal costsPercentageOfUserSalary,
                                BigDecimal netSalaryAfterCosts) {
-        this.id = id;
+        this.id = id; // todo sprawdzic to
         this.monthlyCostsSum = monthlyCostsSum;
         this.rentPercentageOfUserSalary = rentPercentageOfUserSalary;
         this.foodCostsPercentageOfUserSalary = foodCostsPercentageOfUserSalary;

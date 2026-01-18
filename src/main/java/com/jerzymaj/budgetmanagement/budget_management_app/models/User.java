@@ -35,7 +35,8 @@ public class User {
     @UpdateTimestamp
     private LocalDateTime lastModifiedDate;
 
-    public User() {}
+    public User() {
+    }
 
     public User(Long id, String name, double netSalary) {
         this.id = id;

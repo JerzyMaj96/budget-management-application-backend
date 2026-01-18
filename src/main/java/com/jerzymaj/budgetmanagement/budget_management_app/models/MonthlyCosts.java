@@ -61,7 +61,8 @@ public class MonthlyCosts {
     @UpdateTimestamp
     private LocalDateTime lastModifiedDate;
 
-    public MonthlyCosts() {}
+    public MonthlyCosts() {
+    }
 
     public MonthlyCosts(double rent, double foodCosts, double currentElectricityBill, double currentGasBill,
                         double totalCarServiceCosts, double carInsuranceCosts, double carOperatingCosts) {
