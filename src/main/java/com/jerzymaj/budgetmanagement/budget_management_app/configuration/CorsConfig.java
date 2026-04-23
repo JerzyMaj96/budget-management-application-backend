@@ -30,9 +30,4 @@ public class CorsConfig {
             }
         };
     }
-
-//    @Bean
-//    public RestTemplate restTemplate() {
-//        return new RestTemplate();
-//    }
 }
