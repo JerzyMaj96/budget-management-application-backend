@@ -5,6 +5,7 @@ import com.jerzymaj.budgetmanagement.budget_management_app.exceptions.ExistingUs
 import com.jerzymaj.budgetmanagement.budget_management_app.exceptions.UserNotFoundException;
 import com.jerzymaj.budgetmanagement.budget_management_app.models.User;
 import com.jerzymaj.budgetmanagement.budget_management_app.services.UserService;
+import com.jerzymaj.budgetmanagement.budget_management_app.translator.Translator;
 import jakarta.validation.Valid;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
@@ -42,7 +43,7 @@ public class UserController {
         User user = userService.getUserById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found: " + userId));
 
-        UserDTO userDTO = new UserDTO(user.getId(), user.getName(), user.getNetSalary());
+        UserDTO userDTO = Translator.convertUserToDto(user);
 
         EntityModel<UserDTO> entityModel = EntityModel.of(userDTO);
         entityModel.add(linkTo(methodOn(this.getClass()).retrieveAllUsers()).withRel("all-users"));
@@ -72,10 +73,8 @@ public class UserController {
                 .buildAndExpand(savedUser.getId())
                 .toUri();
 
-        UserDTO savedUserDTO = userService.convertUserToDTO(savedUser);
+        UserDTO savedUserDTO = Translator.convertUserToDto(savedUser);
 
         return ResponseEntity.created(location).body(savedUserDTO);
     }
-
-
 }
