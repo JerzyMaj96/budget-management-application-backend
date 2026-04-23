@@ -1,13 +1,20 @@
 package com.jerzymaj.budgetmanagement.budget_management_app.configuration;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
 public class CorsConfig {
+
+    @Value("${app.cors.allowed-origins}")
+    private final String[] allowedOrigins;
+
+    public CorsConfig(String[] allowedOrigins) {
+        this.allowedOrigins = allowedOrigins;
+    }
 
     @Bean
     public WebMvcConfigurer corsConfigurer() {
@@ -15,7 +22,7 @@ public class CorsConfig {
             @Override
             public void addCorsMappings(CorsRegistry registry) {
                 registry.addMapping("/**")
-                        .allowedOrigins("http://localhost:5173")
+                        .allowedOrigins(allowedOrigins)
                         .allowedMethods("GET", "POST", "PUT", "DELETE")
                         .allowedHeaders("*")
                         .allowCredentials(true)
@@ -24,8 +31,8 @@ public class CorsConfig {
         };
     }
 
-    @Bean
-    public RestTemplate restTemplate() {
-        return new RestTemplate();
-    }
+//    @Bean
+//    public RestTemplate restTemplate() {
+//        return new RestTemplate();
+//    }
 }
