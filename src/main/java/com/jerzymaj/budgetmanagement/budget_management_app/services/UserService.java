@@ -1,6 +1,5 @@
 package com.jerzymaj.budgetmanagement.budget_management_app.services;
 
-import com.jerzymaj.budgetmanagement.budget_management_app.DTOs.UserDTO;
 import com.jerzymaj.budgetmanagement.budget_management_app.exceptions.MonthlyCostsSumNotFoundException;
 import com.jerzymaj.budgetmanagement.budget_management_app.exceptions.UserNotFoundException;
 import com.jerzymaj.budgetmanagement.budget_management_app.repositories.UserRepository;
