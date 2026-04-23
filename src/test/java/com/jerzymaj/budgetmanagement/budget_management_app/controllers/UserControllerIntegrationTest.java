@@ -1,11 +1,8 @@
 package com.jerzymaj.budgetmanagement.budget_management_app.controllers;
 
-import com.jerzymaj.budgetmanagement.budget_management_app.jpa_repositories.MonthlyCostsRepository;
-import com.jerzymaj.budgetmanagement.budget_management_app.jpa_repositories.MonthlyCostsSummaryRepository;
-import com.jerzymaj.budgetmanagement.budget_management_app.jpa_repositories.UserRepository;
+import com.jerzymaj.budgetmanagement.budget_management_app.repositories.UserRepository;
 import com.jerzymaj.budgetmanagement.budget_management_app.models.User;
 import jakarta.transaction.Transactional;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInstance;

@@ -1,11 +1,9 @@
 package com.jerzymaj.budgetmanagement.budget_management_app.services;
 
 import com.jerzymaj.budgetmanagement.budget_management_app.DTOs.UserDTO;
-import com.jerzymaj.budgetmanagement.budget_management_app.exceptions.MonthlyCostsNotFoundException;
 import com.jerzymaj.budgetmanagement.budget_management_app.exceptions.MonthlyCostsSumNotFoundException;
-import com.jerzymaj.budgetmanagement.budget_management_app.exceptions.MonthlyCostsSummaryNotFoundException;
 import com.jerzymaj.budgetmanagement.budget_management_app.exceptions.UserNotFoundException;
-import com.jerzymaj.budgetmanagement.budget_management_app.jpa_repositories.UserRepository;
+import com.jerzymaj.budgetmanagement.budget_management_app.repositories.UserRepository;
 import com.jerzymaj.budgetmanagement.budget_management_app.models.MonthlyCosts;
 import com.jerzymaj.budgetmanagement.budget_management_app.models.MonthlyCostsSummary;
 import com.jerzymaj.budgetmanagement.budget_management_app.models.User;
@@ -13,9 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.Month;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @Service

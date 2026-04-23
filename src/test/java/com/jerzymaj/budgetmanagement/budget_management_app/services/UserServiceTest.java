@@ -1,6 +1,6 @@
 package com.jerzymaj.budgetmanagement.budget_management_app.services;
 
-import com.jerzymaj.budgetmanagement.budget_management_app.jpa_repositories.UserRepository;
+import com.jerzymaj.budgetmanagement.budget_management_app.repositories.UserRepository;
 import com.jerzymaj.budgetmanagement.budget_management_app.models.MonthlyCosts;
 import com.jerzymaj.budgetmanagement.budget_management_app.models.MonthlyCostsSummary;
 import com.jerzymaj.budgetmanagement.budget_management_app.models.User;

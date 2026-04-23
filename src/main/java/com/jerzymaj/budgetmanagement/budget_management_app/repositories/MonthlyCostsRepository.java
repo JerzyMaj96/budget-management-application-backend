@@ -1,4 +1,4 @@
-package com.jerzymaj.budgetmanagement.budget_management_app.jpa_repositories;
+package com.jerzymaj.budgetmanagement.budget_management_app.repositories;
 
 import com.jerzymaj.budgetmanagement.budget_management_app.models.MonthlyCosts;
 import org.springframework.data.jpa.repository.JpaRepository;
