@@ -41,13 +41,6 @@ public class UserService {
         userRepository.deleteById(id);
     }
 
-    public UserDTO convertUserToDTO(User user) {
-        return new UserDTO(user.getId(),
-                user.getName(),
-                user.getNetSalary()
-        );
-    }
-
     public BigDecimal calculateRentCostPercentageOfUserSalaryForMonthlyCosts(Long userId, int month) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("User not found: " + userId));
